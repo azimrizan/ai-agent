@@ -1,0 +1,44 @@
+import type { Store } from "../types/product.js";
+
+export const MOCK_STORES: Store[] = [
+  {
+    id: "store_001",
+    name: "DIY Hub Flagship Store — Indiranagar",
+    address: "100 Feet Road, Indiranagar, Bengaluru, KA 560038",
+    postalCode: "560038",
+    distance: "1.8 km",
+    availableStockCount: 18,
+    phone: "+91 80 4123 5678",
+    hours: "9:00 AM – 9:30 PM (Daily)"
+  },
+  {
+    id: "store_002",
+    name: "DIY Hub Express — Koramangala",
+    address: "80 Feet Road, 4th Block, Koramangala, Bengaluru, KA 560034",
+    postalCode: "560034",
+    distance: "4.2 km",
+    availableStockCount: 15,
+    phone: "+91 80 4123 9012",
+    hours: "10:00 AM – 9:00 PM (Daily)"
+  },
+  {
+    id: "store_003",
+    name: "DIY Hub Superstore — Whitefield",
+    address: "Phoenix Marketcity Annex, Mahadevapura, Bengaluru, KA 560048",
+    postalCode: "560048",
+    distance: "8.5 km",
+    availableStockCount: 24,
+    phone: "+91 80 6789 1234",
+    hours: "10:00 AM – 10:00 PM (Daily)"
+  },
+  {
+    id: "store_004",
+    name: "DIY Hub City Center — Malleshwaram",
+    address: "Sampige Road, Malleshwaram, Bengaluru, KA 560003",
+    postalCode: "560003",
+    distance: "6.1 km",
+    availableStockCount: 12,
+    phone: "+91 80 2345 6789",
+    hours: "9:30 AM – 9:00 PM (Daily)"
+  }
+];
