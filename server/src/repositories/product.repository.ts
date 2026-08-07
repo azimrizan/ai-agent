@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Product, Store } from "../schemas/product.schema.js";
+import { shopifyService } from "../services/shopify.service.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,9 +10,33 @@ const __dirname = path.dirname(__filename);
 class ProductRepository {
   private products: Product[] = [];
   private stores: Store[] = [];
+  private shopifyProductsLoaded: boolean = false;
 
   constructor() {
     this.loadData();
+    // Proactively load live products from Shopify Storefront API
+    this.syncShopifyProducts().catch((err) => {
+      console.warn("Initial Shopify products sync warning:", err);
+    });
+    // 15-minute background refresh fallback
+    setInterval(() => {
+      this.syncShopifyProducts().catch(() => {});
+    }, 15 * 60 * 1000);
+  }
+
+  public handleWebhookUpdate(updatedProd: Product) {
+    const idx = this.products.findIndex((p) => p.id === updatedProd.id);
+    if (idx >= 0) {
+      this.products[idx] = updatedProd;
+    } else {
+      this.products.unshift(updatedProd);
+    }
+    console.log(`🛍️ Webhook updated product in memory: ${updatedProd.title}`);
+  }
+
+  public handleWebhookDelete(productId: string) {
+    this.products = this.products.filter((p) => p.id !== productId);
+    console.log(`🛍️ Webhook removed product from memory: ${productId}`);
   }
 
   private loadData() {
@@ -30,7 +55,8 @@ class ProductRepository {
       for (const pPath of possibleProductPaths) {
         if (fs.existsSync(pPath)) {
           const rawProducts = fs.readFileSync(pPath, "utf-8");
-          this.products = JSON.parse(rawProducts);
+          const localProds = JSON.parse(rawProducts);
+          this.mergeProducts(localProds);
           break;
         }
       }
@@ -47,12 +73,74 @@ class ProductRepository {
     }
   }
 
+  public async syncShopifyProducts(searchQuery?: string): Promise<Product[]> {
+    try {
+      const shopifyProds = await shopifyService.fetchProducts({ query: searchQuery, first: 50 });
+      if (shopifyProds && shopifyProds.length > 0) {
+        this.mergeProducts(shopifyProds);
+        this.shopifyProductsLoaded = true;
+        console.log(`🛍️  Synced ${shopifyProds.length} products from Shopify Storefront API (${shopifyService.getStoreDomain()})`);
+      }
+      return shopifyProds;
+    } catch (error) {
+      console.error("Error syncing Shopify products:", error);
+      return [];
+    }
+  }
+
+  private mergeProducts(newProducts: Product[]) {
+    for (const prod of newProducts) {
+      const idx = this.products.findIndex((p) => p.id === prod.id || p.sku === prod.sku);
+      if (idx >= 0) {
+        this.products[idx] = prod;
+      } else {
+        // Place Shopify products at the front of the catalog
+        if (prod.id.includes("shopify")) {
+          this.products.unshift(prod);
+        } else {
+          this.products.push(prod);
+        }
+      }
+    }
+  }
+
   public getAllProducts(): Product[] {
     return this.products;
   }
 
   public getProductById(productId: string): Product | null {
-    return this.products.find((p) => p.id === productId || p.sku === productId) || null;
+    if (!productId) return null;
+    const cleanId = String(productId).trim();
+    const found = this.products.find(
+      (p) => p.id === cleanId || p.sku === cleanId || p.id.endsWith(cleanId)
+    );
+    if (found) return found;
+
+    // Partial numeric match for Shopify GIDs
+    const numericPart = cleanId.replace(/[^0-9]/g, "");
+    if (numericPart) {
+      const match = this.products.find((p) => p.id.includes(numericPart));
+      if (match) return match;
+    }
+
+    return null;
+  }
+
+  public async searchProductsAsync(options: {
+    query?: string;
+    category?: string;
+    maxPrice?: number;
+    tags?: string[];
+    limit?: number;
+  }): Promise<Product[]> {
+    // If query is provided, query Shopify Storefront API live
+    if (options.query && options.query.trim()) {
+      await this.syncShopifyProducts(options.query);
+    } else if (!this.shopifyProductsLoaded) {
+      await this.syncShopifyProducts();
+    }
+
+    return this.searchProducts(options);
   }
 
   public searchProducts(options: {
@@ -63,16 +151,43 @@ class ProductRepository {
     limit?: number;
   }): Product[] {
     let results = [...this.products];
+    let effectiveMaxPrice = options.maxPrice;
+
+    const stopWords = new Set([
+      "show", "me", "find", "get", "buy", "under", "below", "less", "than", "for",
+      "with", "the", "a", "an", "of", "in", "to", "and", "or", "i", "want", "need",
+      "please", "list", "items", "some", "any", "which", "what", "are", "is", "can", "you"
+    ]);
+
+    let keyWords: string[] = [];
+
+    if (options.query && options.query.trim() !== "") {
+      const rawQuery = options.query.toLowerCase().trim();
+
+      // Extract price constraint from prompt if not specified (e.g. "under 2000" or "below ₹1500")
+      if (!effectiveMaxPrice) {
+        const priceMatch = rawQuery.match(/(?:under|below|less than|max|within|budget|₹|\$)\s*(\d+(?:,\d+)?)/i);
+        if (priceMatch && priceMatch[1]) {
+          effectiveMaxPrice = parseInt(priceMatch[1].replace(/,/g, ""), 10);
+        }
+      }
+
+      // Filter stop words and numbers from keywords
+      keyWords = rawQuery
+        .replace(/[^\w\s]/g, " ")
+        .split(/\s+/)
+        .filter((word) => word.length > 1 && !stopWords.has(word) && !/^\d+$/.test(word));
+    }
 
     if (options.category && options.category.trim() !== "") {
       const catLower = options.category.toLowerCase().trim();
       results = results.filter((p) =>
-        p.category.toLowerCase() === catLower || p.subcategory.toLowerCase().includes(catLower)
+        p.category.toLowerCase().includes(catLower) || p.subcategory.toLowerCase().includes(catLower)
       );
     }
 
-    if (typeof options.maxPrice === "number" && options.maxPrice > 0) {
-      results = results.filter((p) => p.price <= options.maxPrice!);
+    if (typeof effectiveMaxPrice === "number" && effectiveMaxPrice > 0) {
+      results = results.filter((p) => p.price <= effectiveMaxPrice!);
     }
 
     if (options.tags && options.tags.length > 0) {
@@ -83,11 +198,34 @@ class ProductRepository {
       );
     }
 
-    if (options.query && options.query.trim() !== "") {
-      const queryWords = options.query.toLowerCase().trim().split(/\s+/);
+    if (keyWords.length > 0) {
+      const rawQueryNoSpaces = options.query?.toLowerCase().replace(/\s+/g, "") || "";
+
       results = results.filter((p) => {
         const fullText = `${p.name} ${p.description} ${p.category} ${p.subcategory} ${p.tags.join(" ")} ${p.useCases.join(" ")}`.toLowerCase();
-        return queryWords.every((word) => fullText.includes(word));
+        const fullTextNoSpaces = fullText.replace(/\s+/g, "");
+
+        if (rawQueryNoSpaces.length > 2 && fullTextNoSpaces.includes(rawQueryNoSpaces)) {
+          return true;
+        }
+
+        return keyWords.some((word) => {
+          const singular = word.endsWith("s") ? word.slice(0, -1) : word;
+          const escWord = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const escSingular = singular.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const regWord = new RegExp(`\\b${escWord}\\b`, "i");
+          const regSingular = new RegExp(`\\b${escSingular}\\b`, "i");
+          return regWord.test(fullText) || regSingular.test(fullText);
+        });
+      });
+
+      // Sort by relevance (number of matching keywords as whole words)
+      results.sort((a, b) => {
+        const fullTextA = `${a.name} ${a.description} ${a.category} ${a.subcategory}`.toLowerCase();
+        const fullTextB = `${b.name} ${b.description} ${b.category} ${b.subcategory}`.toLowerCase();
+        const scoreA = keyWords.reduce((acc, k) => acc + (new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(fullTextA) ? 1 : 0), 0);
+        const scoreB = keyWords.reduce((acc, k) => acc + (new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(fullTextB) ? 1 : 0), 0);
+        return scoreB - scoreA;
       });
     }
 
@@ -104,11 +242,15 @@ class ProductRepository {
     reason?: "cheaper" | "premium" | "similar";
   }): Product[] {
     const original = this.getProductById(options.productId);
-    if (!original) return [];
+    if (!original) return this.products.slice(0, 4);
 
     let candidates = this.products.filter(
-      (p) => p.id !== original.id && p.category === original.category
+      (p) => p.id !== original.id && (p.category === original.category || p.subcategory === original.subcategory)
     );
+
+    if (candidates.length === 0) {
+      candidates = this.products.filter((p) => p.id !== original.id);
+    }
 
     if (options.reason === "cheaper" || (options.targetPrice && options.targetPrice < original.price)) {
       candidates = candidates.filter((p) => p.price < original.price);
@@ -121,6 +263,13 @@ class ProductRepository {
     }
 
     return candidates.slice(0, 4);
+  }
+
+  public async getProductByIdAsync(id: string): Promise<Product | null> {
+    const found = this.getProductById(id);
+    if (found) return found;
+    await this.syncShopifyProducts();
+    return this.getProductById(id) || null;
   }
 
   public calculateBasket(items: { productId: string; quantity: number }[], budgetMaximum?: number | null): {
@@ -168,30 +317,9 @@ class ProductRepository {
       };
     }
 
-    // Check direct compatibleWith linkages or category logical fit
-    for (let i = 0; i < prods.length; i++) {
-      for (let j = i + 1; j < prods.length; j++) {
-        const p1 = prods[i];
-        const p2 = prods[j];
-        if (p1.compatibleWith.includes(p2.id) || p2.compatibleWith.includes(p1.id)) {
-          continue;
-        }
-        // Logical checks
-        if (p1.category === "Gardening" && p2.category === "Gardening") {
-          continue;
-        }
-        if (p1.category === "Tools" && p2.category === "Hardware") {
-          continue;
-        }
-        if (p1.category === "Electrical" && p2.category === "Storage") {
-          continue;
-        }
-      }
-    }
-
     return {
       compatible: true,
-      explanation: `Selected products (${prods.map((p) => p.name).join(", ")}) are compatible and work seamlessly together for this project.`,
+      explanation: `Selected products (${prods.map((p) => p.name).join(", ")}) are compatible and work seamlessly together.`,
     };
   }
 

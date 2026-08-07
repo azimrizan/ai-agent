@@ -20,12 +20,23 @@ export interface ChatMessage {
   };
 }
 
+export interface CustomerProfile {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  ordersCount?: number;
+  city?: string;
+  accessToken?: string;
+}
+
 export interface AgentRequest {
   message: string;
   image?: string;
   history: ChatMessage[];
   projectState: ProjectState;
   useMock?: boolean;
+  customerProfile?: CustomerProfile | null;
 }
 
 export interface AgentResponse {

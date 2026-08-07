@@ -1,103 +1,84 @@
 import React from "react";
 import { useAgentStore } from "../store/useAgentStore.js";
-import { X, Check, ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-react";
-import { MOCK_PRODUCTS } from "../data/mockProducts.js";
+import { X, Check, Sparkles } from "lucide-react";
 
 export const ReplacementModal: React.FC = () => {
-  const { replacementModal, closeReplacementModal, replaceItem } = useAgentStore();
+  const { replacementModal, closeReplacementModal, replaceItem, getProduct } = useAgentStore();
 
   if (!replacementModal.isOpen || !replacementModal.targetItem) return null;
 
-  const currentProduct = MOCK_PRODUCTS.find((p) => p.id === replacementModal.targetItem?.productId);
+  const currentProduct = getProduct(replacementModal.targetItem?.productId);
   if (!currentProduct) return null;
 
-  const currentTitle = currentProduct.name;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-white/95 rounded-2xl border border-stone-200/80 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-300">
+      <div className="bg-[#0E0E0E] rounded-[28px] border border-white/10 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden text-white">
         {/* Header */}
-        <div className="p-5 border-b border-stone-200/80 flex items-center justify-between bg-stone-50/80">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center border border-purple-500/20">
-              <Sparkles className="w-4 h-4" />
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+              <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-stone-900 text-base">Select AI Alternative or Swap</h3>
-              <p className="text-xs text-stone-600">
-                Replacing <span className="text-purple-600 font-semibold">{currentTitle}</span> (₹{currentProduct.price})
+              <h3 className="font-bold text-white text-base">Select Alternative</h3>
+              <p className="text-xs text-white/50">
+                Swapping <span className="text-white font-medium">{currentProduct.name}</span> (₹{currentProduct.price.toLocaleString()})
               </p>
             </div>
           </div>
           <button
             onClick={closeReplacementModal}
-            className="p-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-stone-900 transition-colors"
+            className="p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Alternatives List */}
-        <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-3">
+        <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
           {replacementModal.alternatives.length === 0 ? (
-            <div className="text-center py-8 text-stone-500 text-sm">
-              No direct alternatives found in this exact category. Try adjusting category filters.
+            <div className="text-center py-12 text-white/40 text-xs">
+              No direct alternatives found in this catalog query.
             </div>
           ) : (
             replacementModal.alternatives.map((alt) => {
               const priceDiff = alt.price - currentProduct.price;
-              const isCheaper = priceDiff < 0;
-              const altTitle = alt.name;
-              const altCategory = alt.category || alt.subcategory || "Product";
 
               return (
                 <div
                   key={alt.id}
-                  className="bg-stone-50/80 rounded-xl border border-stone-200/80 hover:border-purple-400/50 p-4 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group shadow-xs hover:shadow-md"
+                  className="liquid-glass-card rounded-[20px] p-5 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={alt.image}
-                      alt={altTitle}
-                      className="w-14 h-14 rounded-lg object-cover bg-stone-100 shrink-0 border border-stone-200"
-                    />
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-black/40 border border-white/5 shrink-0 flex items-center justify-center p-1">
+                      <img
+                        src={alt.image}
+                        alt={alt.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-stone-200 text-stone-700">
-                          {altCategory}
-                        </span>
-                        {isCheaper ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 flex items-center gap-1 border border-emerald-200">
-                            <ArrowDownRight className="w-3 h-3" /> Save ₹{Math.abs(priceDiff)}
-                          </span>
-                        ) : priceDiff > 0 ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 flex items-center gap-1 border border-sky-200">
-                            <ArrowUpRight className="w-3 h-3" /> Premium (+₹{priceDiff})
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200">
-                            Similar Price
-                          </span>
-                        )}
-                      </div>
-                      <h4 className="font-bold text-stone-900 text-sm group-hover:text-purple-600 transition-colors truncate">
-                        {altTitle}
+                      <h4 className="font-bold text-white text-sm truncate">
+                        {alt.name}
                       </h4>
-                      {alt.description && <p className="text-xs text-stone-600 line-clamp-1">{alt.description}</p>}
+                      {alt.description && <p className="text-xs text-white/40 line-clamp-1 mt-0.5">{alt.description}</p>}
                     </div>
                   </div>
 
-                  <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-stone-200/80 shrink-0">
+                  <div className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-white/5 shrink-0">
                     <div className="text-right">
-                      <div className="font-black text-stone-900 text-base font-mono">₹{alt.price.toLocaleString()}</div>
-                      <div className="text-[10px] text-stone-500">In Stock</div>
+                      <div className="font-bold text-white text-base font-mono">₹{alt.price.toLocaleString()}</div>
+                      <div className="text-[10px] text-white/40 font-mono">
+                        {priceDiff < 0 ? `-₹${Math.abs(priceDiff)}` : priceDiff > 0 ? `+₹${priceDiff}` : "Same Price"}
+                      </div>
                     </div>
+
                     <button
                       onClick={() => replaceItem(currentProduct.id, alt)}
-                      className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold text-xs transition-all shadow-md flex items-center gap-1 shrink-0"
+                      className="px-4 py-2 rounded-full bg-white text-black hover:bg-white/90 font-bold text-xs transition-all flex items-center gap-1.5 shrink-0"
                     >
                       <Check className="w-3.5 h-3.5" />
-                      Swap Now
+                      Swap
                     </button>
                   </div>
                 </div>
@@ -107,11 +88,11 @@ export const ReplacementModal: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-stone-200/80 bg-stone-50/80 flex items-center justify-between text-xs text-stone-600">
-          <span>Replacing updates your shopping plan & subtotal instantly.</span>
+        <div className="p-5 border-t border-white/5 flex items-center justify-between text-xs text-white/40">
+          <span>Subtotal and plan will update automatically.</span>
           <button
             onClick={closeReplacementModal}
-            className="px-4 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors font-medium border border-stone-200"
+            className="px-4 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors text-xs font-medium"
           >
             Cancel
           </button>

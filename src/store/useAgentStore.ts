@@ -4,6 +4,16 @@ import type { ProjectState, ShoppingListItem } from "../types/project.js";
 import type { Product } from "../types/product.js";
 import { MOCK_PRODUCTS } from "../data/mockProducts.js";
 
+export interface CustomerProfile {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  ordersCount?: number;
+  city?: string;
+  accessToken?: string;
+}
+
 interface AgentStoreState {
   messages: ChatMessage[];
   projectState: ProjectState;
@@ -11,6 +21,10 @@ interface AgentStoreState {
   isThinking: boolean;
   activeWorkspaceTab: "analysis" | "plan" | "budget" | "stores";
   useMockAI: boolean;
+  productsCatalog: Product[];
+  customerProfile: CustomerProfile | null;
+  isMobileChatOpen: boolean;
+  hasUnreadReply: boolean;
   replacementModal: {
     isOpen: boolean;
     targetItem: ShoppingListItem | null;
@@ -19,8 +33,13 @@ interface AgentStoreState {
 
   // Actions
   sendMessage: (text: string, image?: string) => Promise<void>;
+  toggleMobileChat: (open?: boolean) => void;
+  clearUnreadReply: () => void;
   setWorkspaceTab: (tab: "analysis" | "plan" | "budget" | "stores") => void;
   setUseMockAI: (useMock: boolean) => void;
+  setCustomerProfile: (profile: CustomerProfile | null) => void;
+  fetchProductsCatalog: () => Promise<void>;
+  getProduct: (id: string) => Product | undefined;
   updateQuantity: (productId: string, delta: number) => void;
   removeItem: (productId: string) => void;
   openReplacementModal: (item: ShoppingListItem) => Promise<void>;
@@ -49,17 +68,7 @@ const DEFAULT_PROJECT_STATE: ProjectState = {
 const INITIAL_MESSAGE: ChatMessage = {
   id: "msg_init_0",
   role: "assistant",
-  content: `### Hi! I'm MR. Plus AI Agent, how can I help you today? ✨
-
-I'm your dedicated digital project architect and shopping advisor. Unlike a standard search bar, I can synthesize multi-step DIY plans, diagnose broken household items from photos, and optimize your entire shopping basket to strictly respect your budget.
-
-#### Try starting with a quick demo scenario:
-- 🌿 **"I want to set up a small balcony garden. My budget is ₹8,000."**
-- 🏡 **"I'm moving into my first apartment. Build me an essentials list under ₹15,000."**
-- 🔧 **Upload a photo** of a broken cabinet hinge or fixture and ask: **"How can I fix this?"**
-- 🔌 **"I need the thing used to organize loose charging cables, but I don't know what it's called."**
-
-On the **left panel**, your dynamic workspace will bring your project steps, product compatibility checks, and live budget breakdown to life right before your eyes!`,
+  content: "Welcome to MR.PLUS. Tell me what you're looking for or building today, and I'll curate the best products for you.",
   timestamp: new Date().toISOString(),
 };
 
@@ -67,23 +76,64 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
   messages: [INITIAL_MESSAGE],
   projectState: DEFAULT_PROJECT_STATE,
   suggestedActions: [
-    "Set up a small balcony garden (₹8,000)",
-    "First apartment essentials under ₹15,000",
-    "How can I fix a loose cabinet hinge?",
-    "Find cable organizer and desk tidy box",
+    "Pressure cookers & frypans",
+    "Balcony garden setup",
+    "First apartment essentials",
+    "Cable management boxes",
   ],
   isThinking: false,
   activeWorkspaceTab: "plan",
   useMockAI: false,
+  productsCatalog: MOCK_PRODUCTS,
+  customerProfile: null,
+  isMobileChatOpen: false,
+  hasUnreadReply: false,
   replacementModal: {
     isOpen: false,
     targetItem: null,
     alternatives: [],
   },
 
+  toggleMobileChat: (open?: boolean) => {
+    set((state) => {
+      const nextOpen = open !== undefined ? open : !state.isMobileChatOpen;
+      return {
+        isMobileChatOpen: nextOpen,
+        hasUnreadReply: nextOpen ? false : state.hasUnreadReply,
+      };
+    });
+  },
+
+  clearUnreadReply: () => set({ hasUnreadReply: false }),
+
   setWorkspaceTab: (tab) => set({ activeWorkspaceTab: tab }),
 
   setUseMockAI: (useMock) => set({ useMockAI: useMock }),
+
+  setCustomerProfile: (profile) => set({ customerProfile: profile }),
+
+  fetchProductsCatalog: async () => {
+    try {
+      const response = await fetch("/api/products");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+          set({ productsCatalog: data.products });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching products catalog from API:", error);
+    }
+  },
+
+  getProduct: (id: string) => {
+    const catalog = get().productsCatalog;
+    let found = catalog.find((p) => p.id === id || p.sku === id || p.id.endsWith(id));
+    if (!found) {
+      found = MOCK_PRODUCTS.find((p) => p.id === id || p.sku === id || p.id.endsWith(id));
+    }
+    return found;
+  },
 
   sendMessage: async (text: string, image?: string) => {
     if (!text.trim() && !image) return;
@@ -96,9 +146,13 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       imageAttachment: image,
     };
 
+    // Auto-close mobile chat modal when prompt is submitted on mobile (<768px)
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
     set((state) => ({
       messages: [...state.messages, userMessage],
       isThinking: true,
+      isMobileChatOpen: isMobile ? false : state.isMobileChatOpen,
     }));
 
     const startTime = Date.now();
@@ -113,6 +167,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
           projectState: get().projectState,
           history: get().messages,
           useMock: get().useMockAI,
+          customerProfile: get().customerProfile,
         }),
       });
 
@@ -122,9 +177,8 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
 
       const data = await response.json();
 
-      // Ensure loading animation shows for at least 2.8 seconds so user can experience the animation while agent fetches details
       const elapsed = Date.now() - startTime;
-      const minLoadingDuration = 2800;
+      const minLoadingDuration = 2000;
       if (elapsed < minLoadingDuration) {
         await new Promise((resolve) => setTimeout(resolve, minLoadingDuration - elapsed));
       }
@@ -134,6 +188,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
         projectState: data.projectState || state.projectState,
         suggestedActions: data.suggestedActions || state.suggestedActions,
         isThinking: false,
+        hasUnreadReply: !state.isMobileChatOpen,
         activeWorkspaceTab:
           data.projectState?.imageAnalysis && state.activeWorkspaceTab === "plan" && !state.projectState.imageAnalysis
             ? "analysis"
@@ -141,11 +196,14 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
             ? "plan"
             : state.activeWorkspaceTab,
       }));
+
+      // Refresh products catalog after AI response
+      get().fetchProductsCatalog();
     } catch (error: any) {
       console.error("Error communicating with AI backend:", error);
       const elapsed = Date.now() - startTime;
-      if (elapsed < 2000) {
-        await new Promise((resolve) => setTimeout(resolve, 2000 - elapsed));
+      if (elapsed < 1500) {
+        await new Promise((resolve) => setTimeout(resolve, 1500 - elapsed));
       }
       const errorMessage: ChatMessage = {
         id: `msg_err_${Date.now()}`,
@@ -171,10 +229,9 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
     const updatedList = [...state.shoppingList];
     updatedList[itemIndex] = { ...updatedList[itemIndex], quantity: newQty };
 
-    // Recalculate subtotal locally or via API
     let newSubtotal = 0;
     for (const item of updatedList) {
-      const prod = MOCK_PRODUCTS.find((p) => p.id === item.productId);
+      const prod = get().getProduct(item.productId);
       if (prod) {
         newSubtotal += prod.price * item.quantity;
       }
@@ -202,7 +259,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
 
     let newSubtotal = 0;
     for (const item of updatedList) {
-      const prod = MOCK_PRODUCTS.find((p) => p.id === item.productId);
+      const prod = get().getProduct(item.productId);
       if (prod) {
         newSubtotal += prod.price * item.quantity;
       }
@@ -225,12 +282,26 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
   },
 
   openReplacementModal: async (item) => {
-    const prod = MOCK_PRODUCTS.find((p) => p.id === item.productId);
-    if (!prod) return;
+    const currentProd = get().getProduct(item.productId);
+    let alts: Product[] = [];
 
-    // Find alternatives from MOCK_PRODUCTS matching category
-    let alts = MOCK_PRODUCTS.filter((p) => p.id !== prod.id && p.category === prod.category);
-    alts.sort((a, b) => Math.abs(a.price - prod.price) - Math.abs(b.price - prod.price));
+    try {
+      const response = await fetch(`/api/products/${encodeURIComponent(item.productId)}/alternatives`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.alternatives && Array.isArray(data.alternatives)) {
+          alts = data.alternatives;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching alternatives from API:", error);
+    }
+
+    if (alts.length === 0 && currentProd) {
+      const catalog = get().productsCatalog.length > 0 ? get().productsCatalog : MOCK_PRODUCTS;
+      alts = catalog.filter((p) => p.id !== currentProd.id && p.category === currentProd.category);
+      alts.sort((a, b) => Math.abs(a.price - currentProd.price) - Math.abs(b.price - currentProd.price));
+    }
 
     set({
       replacementModal: {
@@ -267,7 +338,6 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       reason: `Swapped for ${newProduct.name} (₹${newProduct.price}) to optimize value and specifications.`,
     };
 
-    // Update steps if they referenced the old item
     const updatedSteps = state.steps.map((s) => {
       if (s.relatedProductIds?.includes(oldProductId)) {
         return {
@@ -280,7 +350,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
 
     let newSubtotal = 0;
     for (const item of updatedList) {
-      const prod = MOCK_PRODUCTS.find((p) => p.id === item.productId);
+      const prod = get().getProduct(item.productId) || (item.productId === newProduct.id ? newProduct : null);
       if (prod) {
         newSubtotal += prod.price * item.quantity;
       }
@@ -310,17 +380,16 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
         messages: [INITIAL_MESSAGE],
         projectState: DEFAULT_PROJECT_STATE,
         suggestedActions: [
+          "Show pressure cookers under ₹2,000",
+          "Find non-stick frypans and appachatty",
           "Set up a small balcony garden (₹8,000)",
           "First apartment essentials under ₹15,000",
-          "How can I fix a loose cabinet hinge?",
-          "Find cable organizer and desk tidy box",
         ],
         activeWorkspaceTab: "plan",
       });
       return;
     }
 
-    // Trigger scenario via simulated first message
     let prompt = "";
     let image: string | undefined = undefined;
 

@@ -30,9 +30,10 @@ export class GeminiService {
 
   public async generateResponse(
     userMessage: string,
-    imageAttachment: string | undefined,
-    history: ChatMessage[],
-    currentProjectState: ProjectState
+    imageAttachment?: string,
+    history: ChatMessage[] = [],
+    currentProjectState: ProjectState = {} as any,
+    customerProfile?: any
   ): Promise<{
     replyText: string;
     updatedProjectState: ProjectState;
@@ -58,8 +59,13 @@ export class GeminiService {
     // Build conversation contents
     const contents: any[] = [];
     
-    // Inject current project state context and history
-    const contextIntro = `[System Context: Current Project State JSON: ${JSON.stringify(currentProjectState)}]`;
+    // Inject current project state and logged-in customer profile context
+    let customerContext = "";
+    if (customerProfile && (customerProfile.firstName || customerProfile.email)) {
+      customerContext = ` | Customer Profile: Name: ${customerProfile.firstName || ""} ${customerProfile.lastName || ""}, Email: ${customerProfile.email || ""}, Orders: ${customerProfile.ordersCount || 0}`;
+    }
+
+    const contextIntro = `[System Context: Current Project State JSON: ${JSON.stringify(currentProjectState)}${customerContext}]`;
     
     for (const msg of history.slice(-6)) {
       contents.push({
@@ -91,21 +97,25 @@ export class GeminiService {
       modelName,
       "gemini-2.0-flash",
       "gemini-2.0-flash-lite",
-      "gemini-flash-lite-latest",
-      "gemini-flash-latest"
+      "gemini-1.5-flash",
+      "gemini-1.5-pro",
+      "gemini-2.5-flash",
+      "gemini-flash-latest",
+      "gemini-pro"
     ]));
-    // Note: gemini-2.5-flash / gemini-2.5-pro require billing to be enabled on your API key.
 
     let lastError: any = null;
     for (const currentModel of candidateModels) {
       try {
+        const isSimpleGreeting = /^(hi|hello|hey|hey\s+there|good\s+morning|good\s+afternoon|good\s+evening|namaste|greetings|hi\s+there|hlo|hola)\s*[\.!\?]*$/i.test(userMessage.trim());
+
         let currentResponse = await aiInstance.models.generateContent({
           model: currentModel,
           contents,
           config: {
             systemInstruction: SYSTEM_PROMPT,
             temperature: 0.4,
-            tools: [{ functionDeclarations }],
+            tools: isSimpleGreeting ? undefined : [{ functionDeclarations }],
           },
         });
 
@@ -125,7 +135,7 @@ export class GeminiService {
             break;
           }
 
-          // Push the model's message containing all function calls requested in this turn exactly once
+          // Push the model's message containing all function calls requested in this turn
           const modelContent = currentResponse.candidates?.[0]?.content;
           if (modelContent) {
             contents.push(modelContent);
@@ -157,6 +167,19 @@ export class GeminiService {
                   }
                 } else {
                   result = await tool.execute(toolArgs);
+                  if (toolName === "search_products" && result?.products && Array.isArray(result.products) && result.products.length > 0) {
+                    const newItems = result.products.slice(0, 6).map((p: any) => ({
+                      productId: p.id,
+                      quantity: 1,
+                      reason: `Recommended by MR.PLUS AI`,
+                    }));
+                    updatedProjectState = {
+                      ...updatedProjectState,
+                      title: toolArgs?.query ? `Featured MR.PLUS Products (${toolArgs.query})` : "Featured MR.PLUS Products",
+                      status: "planning",
+                      shoppingList: newItems,
+                    };
+                  }
                 }
 
                 const lastAct = toolActivities[toolActivities.length - 1];
@@ -200,21 +223,9 @@ export class GeminiService {
             }
           }
 
-          // If the model has searched products multiple times or turnCount >= 4, guide it to call update_project_plan or wrap up
-          if (turnCount >= 3 && !toolActivities.some((act) => act.tool === "update_project_plan" && act.status === "completed")) {
-            toolResponseParts.push({
-              functionResponse: {
-                name: "system_instruction_reminder",
-                response: {
-                  reminder: "You have searched the catalogue enough. You MUST call `update_project_plan` right now with the products found and 3 clear DIY roadmap steps, or formulate your final conversational response right away.",
-                },
-              },
-            });
-          }
-
-          // Push all tool responses as a single 'tool' role turn
+          // Push all tool responses as a single 'user' role turn (Google API requires role: 'user' for functionResponse)
           contents.push({
-            role: "tool",
+            role: "user",
             parts: toolResponseParts,
           });
 

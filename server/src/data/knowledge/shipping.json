@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ship_1",
+    "topic": "Shipping policy and delivery time in Kerala",
+    "content": "Free express shipping across Kerala on all orders above ₹999. Standard delivery inside Kerala takes 1 to 2 business days. Express same-day or next-day delivery is available for Kochi, Calicut, and Trivandrum."
+  },
+  {
+    "id": "ship_2",
+    "topic": "Shipping to Rest of India",
+    "content": "Orders outside Kerala are delivered within 3 to 5 business days. Free shipping applies on orders above ₹1,499."
+  },
+  {
+    "id": "ship_3",
+    "topic": "Order Tracking",
+    "content": "Once your order is dispatched from shop.mrplus.in, you will receive an SMS and WhatsApp message with tracking details and a live courier tracking link."
+  }
+]

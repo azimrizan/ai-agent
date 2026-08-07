@@ -13,5 +13,8 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    watch: {
+      ignored: ['**/server/**', '**/analytics_store.json', '**/dist/**', '**/*.log'],
+    },
   },
 })

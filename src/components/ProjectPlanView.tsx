@@ -1,11 +1,10 @@
 import React from "react";
 import { useAgentStore } from "../store/useAgentStore.js";
 import { ProductCard } from "./ProductCard.js";
-import { MOCK_PRODUCTS } from "../data/mockProducts.js";
 import { CheckCircle2, Circle, Clock, ShieldCheck, Sparkles, Filter, Layers } from "lucide-react";
 
 export const ProjectPlanView: React.FC = () => {
-  const { projectState } = useAgentStore();
+  const { projectState, getProduct } = useAgentStore();
   const [priorityFilter, setPriorityFilter] = React.useState<"all" | "essential" | "recommended" | "optional">("all");
 
   const filteredList = React.useMemo(() => {
@@ -129,7 +128,7 @@ export const ProjectPlanView: React.FC = () => {
           </div>
         ) : (
           filteredList.map((item) => {
-            const product = MOCK_PRODUCTS.find((p) => p.id === item.productId);
+            const product = getProduct(item.productId);
             if (!product) return null;
             return <ProductCard key={item.productId} item={item} product={product} />;
           })

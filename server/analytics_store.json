@@ -1,0 +1,43 @@
+{
+  "topSearchedTerms": {
+    "hi mrplus": 1,
+    "fry pan": 6,
+    "tv": 3,
+    "is it cheap and best?": 1,
+    "i wnat tv": 1,
+    "room size is standard": 1,
+    "i want tv and home appliances": 2,
+    "tv also i wnat": 1,
+    "want both tv and home theater": 1,
+    "i want tv and home theater  both combo recommend": 2,
+    "i want home theater": 1,
+    "is this best?": 1,
+    "i want tv": 1,
+    "cookware k": 1,
+    "cookware": 3,
+    "cookware items": 1,
+    "home appliances": 1,
+    "electronic items": 1,
+    "electronic items budget": 1,
+    "air fryer": 1,
+    "hand fan": 2,
+    "electronic items price range": 2,
+    "show me pressure cookers ,000": 3,
+    "appachatty": 1,
+    "find non-stick frypans and appachatty": 1,
+    "pressure cookers": 1
+  },
+  "unansweredQuestions": [],
+  "mostRecommendedProducts": {},
+  "failedSearches": [],
+  "imageUploads": 0,
+  "budgetPlans": 0,
+  "llmCalls": {
+    "groq": 15,
+    "gemini": 11
+  },
+  "toolCalls": {
+    "search_products": 41
+  },
+  "conversationsCompleted": 0
+}

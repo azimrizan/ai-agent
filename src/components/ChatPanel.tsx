@@ -1,9 +1,82 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAgentStore } from "../store/useAgentStore.js";
-import { Send, Image as ImageIcon, Bot, Loader2, CheckCircle2, AlertCircle, X, Terminal, History, Settings, Sparkles } from "lucide-react";
+import { ArrowUp, Image as ImageIcon, Sparkles, Mic, X } from "lucide-react";
+
+const renderFormattedText = (text: string) => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+};
+
+const FormattedMessage: React.FC<{ content: string; isUser: boolean }> = ({ content, isUser }) => {
+  if (isUser) {
+    return <span>{content}</span>;
+  }
+
+  const blocks = content.split(/\n\s*\n/);
+
+  return (
+    <div className="space-y-2.5 text-xs sm:text-sm leading-relaxed text-white/90">
+      {blocks.map((block, bIdx) => {
+        const trimmed = block.trim();
+        if (!trimmed) return null;
+
+        if (trimmed.startsWith("###") || trimmed.startsWith("##") || trimmed.startsWith("#")) {
+          const headerText = trimmed.replace(/^#+\s*/, "");
+          return (
+            <div key={bIdx} className="font-bold text-white text-sm tracking-tight border-b border-white/10 pb-1 mt-1">
+              {renderFormattedText(headerText)}
+            </div>
+          );
+        }
+
+        const lines = trimmed.split("\n").map((l) => l.trim()).filter(Boolean);
+        const isList = lines.every((line) => /^([*•\-]||\d+\.)\s+/.test(line));
+
+        if (isList) {
+          return (
+            <div key={bIdx} className="space-y-1.5 pl-0.5 my-1">
+              {lines.map((line, lIdx) => {
+                const isNumbered = /^\d+\.\s+/.test(line);
+                const numberMatch = line.match(/^(\d+)\.\s+/);
+                const cleanLine = line.replace(/^([*•\-]||\d+\.)\s+/, "");
+                return (
+                  <div key={lIdx} className="flex items-start gap-2">
+                    {isNumbered ? (
+                      <span className="text-white/50 font-mono text-[11px] min-w-[14px] mt-0.5">{numberMatch?.[1]}.</span>
+                    ) : (
+                      <span className="text-white/60 font-bold select-none text-[10px] mt-0.5">•</span>
+                    )}
+                    <span className="text-white/90">{renderFormattedText(cleanLine)}</span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
+
+        return (
+          <div key={bIdx} className="space-y-1">
+            {lines.map((line, lIdx) => (
+              <p key={lIdx}>{renderFormattedText(line)}</p>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const ChatPanel: React.FC = () => {
-  const { messages, sendMessage, isThinking, suggestedActions, resetSession } = useAgentStore();
+  const { messages, sendMessage, isThinking, toggleMobileChat } = useAgentStore();
   const [inputText, setInputText] = useState("");
   const [attachedImage, setAttachedImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -39,188 +112,115 @@ export const ChatPanel: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleChipClick = (actionText: string) => {
-    sendMessage(actionText, attachedImage || undefined);
-    setAttachedImage(null);
+  const activeConversationMessages = messages.filter((msg) => msg.id !== "msg_init_0");
+
+  const cleanMessageContent = (content: string) => {
+    return content
+      .replace(/^> ⚠️.*?\n\n---\n\n/gs, "")
+      .replace(/### Live Shopify Products.*?\n\n/gi, "")
+      .replace(/\*gid:\/\/shopify\/.*?\*/gi, "")
+      .trim();
   };
 
-  const formatMessageText = (content: string) => {
-    return content.split("\n").map((line, idx) => {
-      if (line.startsWith("### ") || line.startsWith("#### ")) {
-        return (
-          <h4 key={idx} className="text-sm sm:text-base font-bold text-stone-900 mt-3 mb-1">
-            {line.replace(/^###?\s+/, "")}
-          </h4>
-        );
-      }
-      if (line.trim().startsWith("- ")) {
-        const bulletContent = line.trim().substring(2);
-        return (
-          <div key={idx} className="flex items-start gap-2 text-stone-700 text-xs sm:text-sm my-1 pl-1">
-            <span className="text-purple-600 font-bold">•</span>
-            <span dangerouslySetInnerHTML={{ __html: parseBoldAndCode(bulletContent) }} />
-          </div>
-        );
-      }
-      if (line.trim() === "") {
-        return <div key={idx} className="h-2" />;
-      }
-      return (
-        <p
-          key={idx}
-          className="text-stone-700 text-xs sm:text-sm leading-relaxed my-1"
-          dangerouslySetInnerHTML={{ __html: parseBoldAndCode(line) }}
-        />
-      );
-    });
-  };
-
-  const parseBoldAndCode = (text: string) => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-stone-900">$1</strong>')
-      .replace(/`(.*?)`/g, '<code class="bg-stone-100 px-1.5 py-0.5 rounded font-mono text-purple-600 text-[11px] border border-stone-200">$1</code>');
-  };
+  const quickPrompts = [
+    { title: "Show pressure cookers under ₹2,000", query: "Show me pressure cookers under ₹2,000" },
+    { title: "Find non-stick frypans and appachatty", query: "Find non-stick frypans and appachatty" },
+    { title: "Set up a small balcony garden", query: "I want to set up a small balcony garden under ₹8,000" },
+    { title: "Digital Air Fryer 5L", query: "Tell me about the MR.PLUS Digital Air Fryer 5L" },
+  ];
 
   return (
-    <div className="flex flex-col h-full relative overflow-hidden bg-transparent text-stone-900">
-      {/* Clean Top Header */}
-      <div className="px-5 py-4 border-b border-stone-200/60 flex items-center justify-between shrink-0 bg-transparent">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-purple-600 to-violet-600 flex items-center justify-center text-white font-bold text-xs shadow-sm shadow-purple-500/20">
-            <Bot className="w-4 h-4" />
-          </div>
-          <div>
-            <span className="font-bold text-stone-900 text-sm sm:text-base tracking-tight block">MR. Plus AI Agent</span>
-            <span className="text-[10px] text-stone-500 font-medium">Multimodal Retail Advisor</span>
-          </div>
+    <div className="flex flex-col h-full relative overflow-hidden bg-[#0E0E0E] text-white">
+      <div
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-3xl opacity-40 pointer-events-none z-0"
+        style={{
+          background: "radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.04) 50%, rgba(0, 0, 0, 0) 75%)",
+        }}
+      />
+
+      <div className="px-6 py-4 flex items-center justify-between border-b border-white/5 shrink-0 relative z-10">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 opacity-70 text-emerald-400" />
+          <span className="font-semibold text-sm tracking-tight text-white">Assistant</span>
         </div>
-        <div className="flex items-center gap-2 text-stone-500">
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] text-white/30 font-normal">MR.PLUS AI</span>
           <button
-            onClick={() => resetSession("blank")}
-            title="Clear & reset chat"
-            className="p-1.5 rounded-lg hover:bg-stone-100 hover:text-stone-900 transition-colors"
+            type="button"
+            onClick={() => toggleMobileChat(false)}
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white md:hidden transition-colors"
+            title="Close Chat Overlay"
           >
-            <History className="w-4 h-4" />
-          </button>
-          <button
-            title="Settings"
-            className="p-1.5 rounded-lg hover:bg-stone-100 hover:text-stone-900 transition-colors"
-          >
-            <Settings className="w-4 h-4" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* Messages Content Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-        {/* Welcome status when starting (before user asks something) */}
-        {messages.length <= 1 && (
-          <div className="flex flex-col items-center justify-center text-center my-auto py-8 animate-in fade-in duration-300">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 mb-3 border border-purple-100 shadow-sm">
-              <Sparkles className="w-6 h-6 animate-pulse" />
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 relative z-10">
+        {activeConversationMessages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-center py-8 my-auto animate-in fade-in duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 shadow-lg">
+              <Sparkles className="w-5 h-5 text-white/90" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-stone-900 mb-1">
+
+            <h3 className="font-bold text-white text-xl tracking-tight mb-2">
               Ready for Your Project
             </h3>
-            <p className="text-xs sm:text-sm text-stone-500 max-w-xs leading-relaxed mb-4">
+
+            <p className="text-xs text-white/50 text-center max-w-xs leading-relaxed mb-6">
               Explore the studio cards on the left panel or type any question below to begin building your custom plan.
             </p>
 
-            {suggestedActions && suggestedActions.length > 0 && (
-              <div className="flex flex-wrap items-center justify-center gap-2 max-w-sm mx-auto">
-                {suggestedActions.slice(0, 3).map((action, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleChipClick(action)}
-                    className="px-3.5 py-1.5 rounded-full bg-white hover:bg-purple-50 text-stone-700 hover:text-purple-600 border border-stone-200/80 text-xs font-medium transition-all shadow-sm"
-                  >
-                    {action.split(" (")[0]}
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="flex flex-col gap-2.5 w-full max-w-xs">
+              {quickPrompts.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => sendMessage(item.query)}
+                  className="w-full px-4 py-2.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/25 text-xs text-white/80 hover:text-white font-medium transition-all text-center"
+                >
+                  {item.title}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
+        ) : (
+          activeConversationMessages.map((msg) => {
+            const isUser = msg.role === "user";
+            const cleanedText = cleanMessageContent(msg.content);
+            if (!cleanedText && !msg.imageAttachment) return null;
 
-        {/* Render Chat Messages */}
-        {messages.length > 1 &&
-          messages
-            .filter((msg) => msg.id !== "msg_init_0")
-            .map((msg) => (
+            return (
               <div
                 key={msg.id}
-                className={`flex flex-col gap-1.5 animate-in fade-in duration-200 ${
-                  msg.role === "user" ? "ml-auto items-end max-w-[85%]" : "mr-auto items-start max-w-[92%]"
-                }`}
+                className={`flex flex-col ${isUser ? "items-end" : "items-start"} animate-in fade-in duration-300`}
               >
-                {/* Tool Trace */}
-                {msg.toolActivity && msg.toolActivity.length > 0 && (
-                  <div className="w-full bg-stone-50/90 rounded-xl border border-stone-200 p-3 space-y-2 mb-1 shadow-inner text-xs">
-                    <div className="flex items-center gap-1.5 font-bold text-stone-800 font-mono">
-                      <Terminal className="w-3.5 h-3.5 text-purple-600" />
-                      <span>Agent Execution Trace:</span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-1.5">
-                      {msg.toolActivity.map((act, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center justify-between gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-stone-200/70 shadow-sm"
-                        >
-                          <div className="flex items-center gap-2 truncate">
-                            {act.status === "running" ? (
-                              <Loader2 className="w-3.5 h-3.5 text-purple-600 animate-spin shrink-0" />
-                            ) : act.status === "completed" ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                            ) : (
-                              <AlertCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                            )}
-                            <span className="font-mono text-stone-800 text-[11px] truncate">{act.tool}</span>
-                          </div>
-                          <span className="text-[10px] text-stone-500 font-medium truncate shrink-0">
-                            {act.displayLabel || act.status}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                {msg.imageAttachment && (
+                  <div className="mb-2 max-w-[220px] rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                    <img src={msg.imageAttachment} alt="Attachment" className="w-full h-auto object-cover" />
                   </div>
                 )}
 
-                {/* Message Bubble Content */}
                 <div
-                  className={`p-4 sm:p-5 rounded-2xl border shadow-md ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-r from-purple-600 to-violet-600 text-white border-purple-400/50 rounded-tr-sm"
-                      : "bg-white text-stone-800 border-stone-200/80 rounded-tl-sm w-full"
+                  className={`max-w-[88%] px-5 py-3.5 rounded-[22px] text-sm leading-relaxed ${
+                    isUser
+                      ? "bg-white text-black font-medium rounded-br-md shadow-md"
+                      : "bg-[#151515] text-white/90 font-normal rounded-bl-md border border-white/5"
                   }`}
                 >
-                  {/* Attached Photo Preview */}
-                  {msg.imageAttachment && (
-                    <div className="mb-3 rounded-xl overflow-hidden border border-stone-200 bg-stone-50 max-w-sm shadow-sm">
-                      <img src={msg.imageAttachment} alt="Attachment preview" className="w-full h-44 object-cover" />
-                    </div>
-                  )}
-
-                  {/* Formatted Text */}
-                  <div className="space-y-1">
-                    {msg.role === "user" ? (
-                      <p className="text-sm font-semibold text-white leading-relaxed">{msg.content}</p>
-                    ) : (
-                      formatMessageText(msg.content)
-                    )}
-                  </div>
+                  <FormattedMessage content={cleanedText} isUser={isUser} />
                 </div>
               </div>
-            ))}
+            );
+          })
+        )}
 
-        {/* Minimal indicator when isThinking (since the video plays on the Left Workspace Panel) */}
+        {/* Apple 3-Dot Breathing Typing Indicator */}
         {isThinking && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-white/90 border border-stone-200 shadow-sm max-w-xs mr-auto animate-in fade-in duration-200">
-            <div className="w-7 h-7 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 border border-purple-100">
-              <Loader2 className="w-4 h-4 animate-spin" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-stone-900">AI Architect is working...</div>
-              <div className="text-[10px] text-stone-500">Synthesizing live on left canvas</div>
+          <div className="flex flex-col items-start animate-in fade-in duration-300">
+            <div className="bg-[#151515] border border-white/5 px-5 py-3.5 rounded-[22px] rounded-bl-md flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-white/70 animate-dot-1" />
+              <span className="w-2 h-2 rounded-full bg-white/70 animate-dot-2" />
+              <span className="w-2 h-2 rounded-full bg-white/70 animate-dot-3" />
             </div>
           </div>
         )}
@@ -228,28 +228,30 @@ export const ChatPanel: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Clean Bottom Input Box */}
-      <div className="p-4 shrink-0 bg-transparent">
+      {/* Input Bar (Floating Glass Capsule) */}
+      <div className="p-4 shrink-0 relative z-10">
         {attachedImage && (
-          <div className="mb-2 p-2 rounded-xl bg-white/90 border border-purple-200 flex items-center justify-between gap-3 max-w-xs animate-in fade-in duration-200 shadow-md">
-            <div className="flex items-center gap-2 overflow-hidden">
-              <img src={attachedImage} alt="Preview" className="w-8 h-8 rounded-lg object-cover bg-stone-100 shrink-0 border border-stone-200" />
-              <span className="text-xs font-bold text-stone-800 truncate">Photo Attached</span>
-            </div>
+          <div className="mb-2 relative inline-block">
+            <img src={attachedImage} alt="Attachment" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
             <button
               onClick={() => setAttachedImage(null)}
-              className="p-1 rounded-lg hover:bg-stone-100 text-stone-400 hover:text-stone-800 transition-colors"
+              className="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border border-white/20"
             >
-              <X className="w-3.5 h-3.5" />
+              ×
             </button>
           </div>
         )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white/90 border border-stone-200/90 focus-within:border-purple-600/80 rounded-2xl px-4 py-2.5 flex items-center gap-3 shadow-lg transition-all"
-        >
-          {/* Hidden file input */}
+        <form onSubmit={handleSubmit} className="relative flex items-center">
+          <input
+            type="text"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Ask MR.PLUS or use voice..."
+            className="w-full glass-capsule text-white placeholder-white/30 text-sm rounded-full pl-12 pr-20 py-3.5 focus:outline-none transition-all"
+          />
+
+          {/* Hidden File Input */}
           <input
             type="file"
             ref={fileInputRef}
@@ -258,36 +260,50 @@ export const ChatPanel: React.FC = () => {
             className="hidden"
           />
 
-          {/* Photo Upload Button */}
+          {/* Left Attachment Trigger */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            title="Upload photo for analysis"
-            className={`p-1 transition-colors shrink-0 flex items-center justify-center ${
-              attachedImage ? "text-purple-600" : "text-stone-400 hover:text-stone-700"
-            }`}
+            className="absolute left-3.5 p-1.5 text-white/40 hover:text-white transition-colors"
+            title="Attach image"
           >
-            <ImageIcon className="w-5 h-5" />
+            <ImageIcon className="w-4 h-4" />
           </button>
 
-          {/* Text Input */}
-          <input
-            type="text"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Ask me (e.g. balcony garden, apartment setup, or fix broken hinge)..."
-            className="flex-1 bg-transparent border-none text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none py-1"
-            disabled={isThinking}
-          />
+          <div className="absolute right-2.5 flex items-center gap-1.5">
+            {/* Mic Voice Search Trigger */}
+            <button
+              type="button"
+              onClick={() => {
+                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                  const recognition = new SpeechRecognition();
+                  recognition.lang = "en-IN";
+                  recognition.onstart = () => setInputText("Listening...");
+                  recognition.onresult = (event: any) => {
+                    const transcript = event.results[0][0].transcript;
+                    setInputText(transcript);
+                  };
+                  recognition.start();
+                } else {
+                  alert("Speech recognition is not supported in this browser.");
+                }
+              }}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-colors"
+              title="Voice query input"
+            >
+              <Mic className="w-3.5 h-3.5" />
+            </button>
 
-          {/* Send Button */}
-          <button
-            type="submit"
-            disabled={isThinking || (!inputText.trim() && !attachedImage)}
-            className="text-purple-600 hover:text-purple-700 disabled:opacity-30 transition-colors shrink-0 p-1 flex items-center justify-center"
-          >
-            {isThinking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-          </button>
+            {/* Send Trigger */}
+            <button
+              type="submit"
+              disabled={!inputText.trim() && !attachedImage}
+              className="p-2 rounded-full bg-white text-black hover:bg-white/90 disabled:opacity-20 disabled:hover:bg-white transition-all shadow-md"
+            >
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -1,21 +1,33 @@
+import { toolRouter } from "./toolRouter.js";
+import { groqService } from "../services/groq.service.js";
 import { geminiService } from "../services/gemini.service.js";
 import { productRepository } from "../repositories/product.repository.js";
+import { analyticsTracker } from "./analytics.js";
 import { AgentRequest, AgentResponse, ToolActivity, ChatMessage } from "../schemas/agent.schema.js";
 import { ProjectState } from "../schemas/project.schema.js";
 
 export class AgentOrchestrator {
   public async processRequest(req: AgentRequest): Promise<AgentResponse> {
+    // Pass request through ToolRouter (resolves 70% simple intents without LLM)
+    return await toolRouter.routeRequest(req, (req, intent) => this.invokeLlmPipeline(req, intent));
+  }
+
+  private async invokeLlmPipeline(req: AgentRequest, intent: any): Promise<AgentResponse> {
     const useMock = req.useMock !== undefined ? req.useMock : process.env.USE_MOCK_AI === "true";
 
-    let fallbackNotice = "";
-    if (!useMock && geminiService.isAvailable()) {
+    // If request contains an image, use Gemini Vision specifically
+    if (!useMock && req.image && geminiService.isAvailable()) {
       try {
+        analyticsTracker.trackLlmCall("gemini");
+        analyticsTracker.trackImageUpload();
+        console.log("📷 Routing Image Analysis request to Gemini Vision AI...");
         const { replyText, updatedProjectState, toolActivity, suggestedActions } =
           await geminiService.generateResponse(
             req.message,
             req.image,
             req.history || [],
-            req.projectState
+            req.projectState,
+            req.customerProfile
           );
 
         const newMsg: ChatMessage = {
@@ -33,20 +45,78 @@ export class AgentOrchestrator {
           toolActivity,
         };
       } catch (error: any) {
-        console.warn("Real Gemini API call failed or unavailable, falling back to intelligent Mock AI engine:", error);
-        const errMsg = error?.message?.split("\n")[0] || String(error);
-        fallbackNotice = `> ⚠️ **Live Gemini API Notice:** Google Gemini API returned a quota or connection error (*${errMsg}*). Automatically routed to our High-Fidelity Local Engine right now:\n\n---\n\n`;
+        console.warn("⚠️ Gemini Vision failed, failing over to Groq text model:", error?.message || error);
       }
-    } else if (!useMock && !geminiService.isAvailable()) {
-      fallbackNotice = `> ⚠️ **Live Gemini API Notice:** API Key is not configured or invalid in \`.env\`. Automatically routed to High-Fidelity Local Engine:\n\n---\n\n`;
     }
 
-    // Execute high-fidelity Mock AI mode
-    const mockRes = await this.runMockEngine(req);
-    if (fallbackNotice && mockRes.message) {
-      mockRes.message.content = fallbackNotice + mockRes.message.content;
+    // Text Reasoning Primary Engine: Groq (Llama 3.3 70B)
+    if (!useMock && groqService.isAvailable()) {
+      try {
+        analyticsTracker.trackLlmCall("groq");
+        const { replyText, updatedProjectState, toolActivity, suggestedActions, usedModel } =
+          await groqService.generateResponse(
+            req.message,
+            req.image,
+            req.history || [],
+            req.projectState,
+            req.customerProfile
+          );
+
+        console.log(`⚡ Groq AI successfully processed text reasoning request using model: ${usedModel}`);
+
+        const newMsg: ChatMessage = {
+          id: `msg_${Date.now()}`,
+          role: "assistant",
+          content: replyText,
+          timestamp: new Date().toISOString(),
+          toolActivity,
+        };
+
+        return {
+          message: newMsg,
+          projectState: updatedProjectState,
+          suggestedActions,
+          toolActivity,
+        };
+      } catch (error: any) {
+        console.warn("⚠️ Groq AI models failed or hit quota limits, failing over to Gemini text engine:", error?.message || error);
+      }
     }
-    return mockRes;
+
+    // Secondary Text Engine: Gemini
+    if (!useMock && geminiService.isAvailable()) {
+      try {
+        analyticsTracker.trackLlmCall("gemini");
+        const { replyText, updatedProjectState, toolActivity, suggestedActions } =
+          await geminiService.generateResponse(
+            req.message,
+            req.image,
+            req.history || [],
+            req.projectState,
+            req.customerProfile
+          );
+
+        const newMsg: ChatMessage = {
+          id: `msg_${Date.now()}`,
+          role: "assistant",
+          content: replyText,
+          timestamp: new Date().toISOString(),
+          toolActivity,
+        };
+
+        return {
+          message: newMsg,
+          projectState: updatedProjectState,
+          suggestedActions,
+          toolActivity,
+        };
+      } catch (error: any) {
+        console.warn("⚠️ Gemini text API returned error, failing over to local engine:", error?.message || error);
+      }
+    }
+
+    // Fallback Engine: Local Autonomous Rule Engine
+    return await this.runMockEngine(req);
   }
 
   private async runMockEngine(req: AgentRequest): Promise<AgentResponse> {
@@ -596,18 +666,18 @@ You can reserve these items online now for **2-Hour Store Pickup** or have them 
     }
     // --- General / Default Fallback Handling ---
     else {
-      recordTool("search_products", `Searched products matching query: "${req.message.slice(0, 30)}..."`);
-      const found = productRepository.searchProducts({ query: req.message, limit: 5 });
+      recordTool("search_products", `Searched Shopify catalog for: "${req.message.slice(0, 30)}..."`);
+      const found = await productRepository.searchProductsAsync({ query: req.message, limit: 8 });
 
-      if (found.length > 0 && state.shoppingList.length === 0) {
+      if (found.length > 0) {
         state.status = "planning";
-        state.title = `${found[0].category} Project Discovery`;
-        state.goal = req.message;
-        state.shoppingList = found.slice(0, 3).map((p) => ({
+        state.title = `${found[0].category} - Catalog Recommendations`;
+        state.goal = `Found live Shopify products matching "${req.message}"`;
+        state.shoppingList = found.slice(0, 5).map((p) => ({
           productId: p.id,
           quantity: 1,
           priority: "essential" as const,
-          reason: `Discovered from catalog search matching your inquiry for ${p.name}.`
+          reason: `Live product fetched directly from Shopify store matching "${req.message}".`
         }));
         const basket = productRepository.calculateBasket(state.shoppingList, null);
         state.budget = {
@@ -615,22 +685,26 @@ You can reserve these items online now for **2-Hour Store Pickup** or have them 
           currentTotal: basket.subtotal,
           remaining: null
         };
-      }
 
-      if (found.length > 0) {
-        replyText = `### Catalog Discovery for "${req.message}" 🛠️\n\nI searched our inventory across our 11 retail categories and discovered **${found.length} exact matches** for your project request, including **${found[0].name} (\`₹${found[0].price}\`)**.\n\nI have pre-populated these items into your **left workspace**. You can adjust quantities, view compatibility details, or click **[Replace]** to check out alternative models!`;
+        const prodListMarkdown = found
+          .slice(0, 5)
+          .map((p) => `- **${p.name}** — \`₹${p.price.toLocaleString()}\` (${p.stockStatus === "in_stock" ? "In Stock" : "Out of Stock"})\n  *${p.description.slice(0, 120)}...*`)
+          .join("\n");
+
+        replyText = `### Live Shopify Products for "${req.message}" 🛍️\n\nI queried your **Shopify Storefront API** and fetched **${found.length} live matching products**:\n\n${prodListMarkdown}\n\nAll selected items have been added to your **Workspace Plan** on the left! You can adjust quantities, calculate basket totals, or explore alternatives.`;
+
+        suggestedActions = found.slice(0, 3).map((p) => `More details on ${p.name.slice(0, 25)}`);
+        suggestedActions.push("Find nearby physical stores", "Build custom project plan");
       } else {
-        replyText = `### Product Inquiry: "${req.message}" 🛋️\n\nI searched our live retail inventory for **"${req.message}"**. Currently, our catalog specializes in 11 core DIY and Home Improvement categories (Gardening, Power Tools, Hardware, Smart Storage, Kitchen, Bathroom, & Electrical), so we don't currently carry exact items matching "${req.message}".\n\nHowever, our AI Advisor is ready to help you plan custom room upgrades, solve household repair problems, or discover complementary organization & tool items! What kind of space or project are you setting up?`;
+        replyText = `### Shopify Storefront API Search: "${req.message}" 🛋️\n\nI searched your connected Shopify store catalog for **"${req.message}"**, but no active items matched this query.\n\nTry searching for items like **"pressure cooker"**, **"appachatty"**, **"frypan"**, **"kadai"**, **"tawa"**, **"kettle"**, or **"air fryer"**!`;
+
+        suggestedActions = [
+          "Show MR PLUS Cookware",
+          "Show Electrical Kettles",
+          "Show Air Fryer",
+          "Show Tawa & Kadai"
+        ];
       }
-
-      replyText += `\n\n#### Popular Starter Project Scenarios:\n- **"Help me set up a balcony garden under ₹8,000"**\n- **"I'm moving into a new apartment. Build me an essentials list under ₹15,000"**\n- **"I don't know what this product is called (cable organizer)"**\n- Or upload a photo of a broken hinge or household problem!`;
-
-      suggestedActions = [
-        "Set up a balcony garden under ₹8,000",
-        "Build apartment essentials list under ₹15,000",
-        "Upload broken item photo for analysis",
-        "Find cable organizer box"
-      ];
     }
 
     const newMsg: ChatMessage = {

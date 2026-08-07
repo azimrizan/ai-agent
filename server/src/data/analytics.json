@@ -1,0 +1,21 @@
+{
+  "topSearchedTerms": {
+    "fry pan": 4,
+    "is it good?": 1,
+    "fry [an": 2,
+    "hi mrplus": 1
+  },
+  "unansweredQuestions": [],
+  "mostRecommendedProducts": {},
+  "failedSearches": [],
+  "imageUploads": 0,
+  "budgetPlans": 0,
+  "llmCalls": {
+    "groq": 1,
+    "gemini": 0
+  },
+  "toolCalls": {
+    "search_products": 8
+  },
+  "conversationsCompleted": 0
+}

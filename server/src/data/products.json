@@ -1,692 +1,1365 @@
 [
   {
-    "id": "prod_gard_001",
-    "sku": "GRD-PLNT-RAIL",
-    "name": "All-Weather Railing Planter Box (Set of 2)",
-    "description": "Durable UV-resistant polypropylene rail planters with self-watering reservoir. Perfect for balcony railings up to 4 inches wide.",
-    "category": "Gardening",
-    "subcategory": "Containers & Planters",
-    "price": 899,
-    "image": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500&q=80",
-    "tags": ["balcony", "garden", "planter", "rail", "self-watering", "outdoor"],
-    "useCases": ["balcony garden", "herb garden", "flower railing"],
-    "specifications": { "material": "Polypropylene", "color": "Terracotta", "length": "60cm", "capacity": "12L" },
-    "compatibleWith": ["prod_gard_003", "prod_gard_006", "prod_gard_008"],
-    "stockStatus": "in_stock"
+    "id": "gid://shopify/Product/9442742796502",
+    "sku": "1",
+    "name": "MR PLUS APPACHATTY 3MM WITH S S LID  MC8161 PROMO PACK",
+    "description": "Non Stick Coating. 3 mm Thickness with Energy Saving Bottom. Heats Evenly and Cooks Faster.",
+    "category": "Appachatty",
+    "subcategory": "Appachatty",
+    "price": 399,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSAPPACHATTY3MMWITHSSLIDMC8161PROMOPACK.png?v=1786025452",
+    "tags": [
+      "Appachatty",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Appachatty",
+      "MR PLUS APPACHATTY 3MM WITH S S LID  MC8161 PROMO PACK",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-appachatty-3mm-with-s-s-lid-mc8161-promo-pack",
+      "shopifyId": "9442742796502"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
   },
   {
-    "id": "prod_gard_002",
-    "sku": "GRD-PLNT-TIER",
-    "name": "3-Tier Vertical Garden Stand",
-    "description": "Space-saving powder-coated steel vertical planter stand with 3 removable planter troughs. Ideal for compact apartments and small balconies.",
-    "category": "Gardening",
-    "subcategory": "Vertical Gardening",
-    "price": 1850,
-    "image": "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=500&q=80",
-    "tags": ["vertical", "garden", "stand", "tier", "balcony", "space-saving"],
-    "useCases": ["balcony garden", "small space", "herb tower"],
-    "specifications": { "material": "Powder Coated Steel", "height": "110cm", "width": "55cm", "weight": "4.2kg" },
-    "compatibleWith": ["prod_gard_003", "prod_gard_005"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_003",
-    "sku": "GRD-SOIL-ORG",
-    "name": "Organic Potting Mix with Perlite (10 kg)",
-    "description": "Premium nutrient-enriched potting mix formulated with coco peat, perlite, and vermicompost for superior drainage and root aeration.",
-    "category": "Gardening",
-    "subcategory": "Soils & Fertilizers",
-    "price": 450,
-    "image": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500&q=80",
-    "tags": ["soil", "potting mix", "organic", "perlite", "fertilizer"],
-    "useCases": ["balcony garden", "container planting", "repotting"],
-    "specifications": { "weight": "10kg", "type": "Organic Blend", "organic": true },
-    "compatibleWith": ["prod_gard_001", "prod_gard_002", "prod_gard_006"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_004",
-    "sku": "GRD-TOOL-SET",
-    "name": "Essential Balcony Garden Tool Set (5-Piece)",
-    "description": "Ergonomic stainless steel hand trowel, transplanting spade, cultivator fork, bypass pruning shears, and garden gloves.",
-    "category": "Gardening",
-    "subcategory": "Garden Tools",
-    "price": 599,
-    "image": "https://images.unsplash.com/photo-1617691761405-b049b1ff5df7?w=500&q=80",
-    "tags": ["tools", "garden set", "trowel", "shears", "gloves", "essential"],
-    "useCases": ["balcony garden", "pruning", "planting", "maintenance"],
-    "specifications": { "pieces": 5, "material": "Stainless Steel & TPR", "rustResistant": true },
-    "compatibleWith": ["prod_gard_001", "prod_gard_002"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_005",
-    "sku": "GRD-TOOL-PRO",
-    "name": "Professional Garden Pruning & Grafting Shears",
-    "description": "High-carbon SK5 steel blades with titanium coating and shock-absorbing spring action for effortless clean cuts.",
-    "category": "Gardening",
-    "subcategory": "Garden Tools",
-    "price": 899,
-    "image": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=500&q=80",
-    "tags": ["pruning", "shears", "pro", "heavy duty"],
-    "useCases": ["thick branch cutting", "precision pruning"],
-    "specifications": { "bladeMaterial": "SK5 Steel", "maxCutDiameter": "25mm" },
-    "compatibleWith": ["prod_gard_004"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_006",
-    "sku": "GRD-PLNT-CER",
-    "name": "Nordic Ceramic Herb Planters with Bamboo Tray (Set of 3)",
-    "description": "Minimalist matte white ceramic pots with drainage holes and natural bamboo saucer drip trays.",
-    "category": "Gardening",
-    "subcategory": "Containers & Planters",
-    "price": 649,
-    "image": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&q=80",
-    "tags": ["ceramic", "herb", "planter", "indoor", "bamboo"],
-    "useCases": ["kitchen herbs", "tabletop succulents", "balcony accents"],
-    "specifications": { "diameter": "12cm", "material": "Ceramic & Bamboo" },
-    "compatibleWith": ["prod_gard_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_007",
-    "sku": "GRD-WTR-CAN",
-    "name": "Long-Spout Stainless Steel Watering Can (1.5L)",
-    "description": "Precision watering can with narrow spout to reach deep foliage without splashing or root disturbance.",
-    "category": "Gardening",
-    "subcategory": "Watering & Irrigation",
+    "id": "gid://shopify/Product/9442742829270",
+    "sku": "2",
+    "name": "MR PLUS APPACHATTY 3MM WITH S S LID MC 8160",
+    "description": "Non Stick Coating. 3 mm Thickness with Energy Saving Bottom. Heats Evenly and Cooks Faster.",
+    "category": "Appachatty",
+    "subcategory": "Appachatty",
     "price": 499,
-    "image": "https://images.unsplash.com/photo-1596701062351-8c2c14d1fdd0?w=500&q=80",
-    "tags": ["watering can", "stainless steel", "indoor", "balcony"],
-    "useCases": ["indoor plant watering", "delicate seedlings"],
-    "specifications": { "capacity": "1.5L", "material": "Brushed Stainless Steel" },
-    "compatibleWith": ["prod_gard_001", "prod_gard_006"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_008",
-    "sku": "GRD-FERT-BIO",
-    "name": "Organic Neem & Seaweed Liquid Plant Food (500ml)",
-    "description": "Bio-active natural fertilizer boost that strengthens root immunity, enhances flowering, and naturally deters pests.",
-    "category": "Gardening",
-    "subcategory": "Soils & Fertilizers",
-    "price": 299,
-    "image": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=500&q=80",
-    "tags": ["fertilizer", "liquid", "organic", "neem", "seaweed"],
-    "useCases": ["weekly plant nutrition", "pest prevention"],
-    "specifications": { "volume": "500ml", "concentrated": true },
-    "compatibleWith": ["prod_gard_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_009",
-    "sku": "GRD-TREL-WOOD",
-    "name": "Expandable Wooden Wall Trellis (180cm x 60cm)",
-    "description": "Treated natural willow expandable diamond lattice for climbing vines, ivy, and vertical flower hanging.",
-    "category": "Gardening",
-    "subcategory": "Vertical Gardening",
-    "price": 799,
-    "image": "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=500&q=80",
-    "tags": ["trellis", "climbing plants", "wooden", "balcony wall"],
-    "useCases": ["balcony wall decor", "creepers", "privacy screen"],
-    "specifications": { "dimensions": "180x60cm", "material": "Treated Willow Wood" },
-    "compatibleWith": ["prod_gard_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_gard_010",
-    "sku": "GRD-PEBBLE-WHT",
-    "name": "Decorative Natural White River Pebbles (5 kg)",
-    "description": "Polished smooth white marble pebbles for top-dressing planter pots, terrariums, and garden borders.",
-    "category": "Gardening",
-    "subcategory": "Decor & Accessories",
-    "price": 350,
-    "image": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500&q=80",
-    "tags": ["pebbles", "decorative", "white", "pot topper"],
-    "useCases": ["moisture retention", "planter decoration"],
-    "specifications": { "weight": "5kg", "size": "20-30mm" },
-    "compatibleWith": ["prod_gard_001", "prod_gard_006"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_tool_001",
-    "sku": "TL-DRILL-12V",
-    "name": "12V Cordless Drill Driver Kit with 24 Bits",
-    "description": "Compact lightweight lithium-ion cordless drill featuring 18+1 torque settings, LED work light, and quick-change chuck.",
-    "category": "Tools",
-    "subcategory": "Power Tools",
-    "price": 2499,
-    "image": "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=500&q=80",
-    "tags": ["drill", "cordless", "power tool", "driver", "kit", "essential"],
-    "useCases": ["furniture assembly", "wall mounting", "DIY repairs"],
-    "specifications": { "voltage": "12V", "battery": "1.5Ah Li-Ion", "torque": "28Nm" },
-    "compatibleWith": ["prod_hard_001", "prod_hard_002", "prod_hard_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_tool_002",
-    "sku": "TL-HAND-46PC",
-    "name": "46-Piece Household Hand Tool & Socket Kit",
-    "description": "Comprehensive toolbox including claw hammer, combination pliers, ratcheting screwdriver, precision bits, tape measure, and utility knife.",
-    "category": "Tools",
-    "subcategory": "Hand Tools",
-    "price": 1299,
-    "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80",
-    "tags": ["toolbox", "hand tools", "hammer", "pliers", "socket set", "essential"],
-    "useCases": ["home maintenance", "apartment move-in", "appliance repair"],
-    "specifications": { "pieces": 46, "case": "Hard Blow-Molded Case" },
-    "compatibleWith": ["prod_tool_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_tool_003",
-    "sku": "TL-LEVEL-MAG",
-    "name": "Professional 9-Inch Magnetic Torpedo Spirit Level",
-    "description": "Heavy-duty aluminum alloy frame with high-visibility V-groove magnetic edge and 3 acrylic vials (45, 90, 180 degree).",
-    "category": "Tools",
-    "subcategory": "Measuring & Layout",
-    "price": 399,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["level", "spirit level", "magnetic", "measuring", "mounting"],
-    "useCases": ["shelf alignment", "TV wall mount", "picture hanging"],
-    "specifications": { "length": "23cm", "magnetic": true },
-    "compatibleWith": ["prod_stor_004"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_tool_004",
-    "sku": "TL-TAPE-5M",
-    "name": "Heavy-Duty Auto-Lock Tape Measure (5 Meter)",
-    "description": "Nylon-coated steel blade with metric and imperial graduations, magnetic end hook, and shock-resistant rubber casing.",
-    "category": "Tools",
-    "subcategory": "Measuring & Layout",
-    "price": 299,
-    "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&q=80",
-    "tags": ["tape measure", "5m", "measuring", "essential"],
-    "useCases": ["room measurement", "furniture sizing"],
-    "specifications": { "length": "5m / 16ft", "bladeWidth": "19mm" },
-    "compatibleWith": ["prod_tool_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_tool_005",
-    "sku": "TL-PLIER-MULTI",
-    "name": "Multi-Function Wire Stripper & Needle Nose Pliers",
-    "description": "Forged chrome vanadium steel pliers with hardened cutting edges, wire stripping holes (10-22 AWG), and terminal crimper.",
-    "category": "Tools",
-    "subcategory": "Hand Tools",
-    "price": 449,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["pliers", "wire stripper", "electrical tool", "needle nose"],
-    "useCases": ["electrical repair", "cable organization", "crafting"],
-    "specifications": { "material": "Cr-V Steel", "length": "20cm" },
-    "compatibleWith": ["prod_elec_003", "prod_elec_004"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_hard_001",
-    "sku": "HRD-ANCH-SET",
-    "name": "Heavy-Duty Wall Anchor & Screw Assortment (150-Piece)",
-    "description": "Premium nylon self-drilling drywall anchors and masonry plugs with matching galvanized Phillips head screws.",
-    "category": "Hardware",
-    "subcategory": "Fasteners & Anchors",
-    "price": 349,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["screws", "anchors", "drywall", "fasteners", "mounting", "essential"],
-    "useCases": ["hanging shelves", "cabinet mounting", "mirror hanging"],
-    "specifications": { "count": 150, "material": "Galvanized Steel & Nylon" },
-    "compatibleWith": ["prod_tool_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_hard_002",
-    "sku": "HRD-HINGE-SFT",
-    "name": "Soft-Close Hydraulic Cabinet Hinges (Pair)",
-    "description": "Full-overlay 35mm concealed cup hinges with integrated hydraulic copper core damping mechanism for silent door closing.",
-    "category": "Hardware",
-    "subcategory": "Cabinet Hardware",
-    "price": 399,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["hinge", "soft close", "cabinet", "hydraulic", "kitchen repair", "replacement"],
-    "useCases": ["loose cabinet hinge repair", "kitchen cabinet upgrade", "door replacement"],
-    "specifications": { "cupDiameter": "35mm", "openingAngle": "105 Degree", "material": "Cold Rolled Steel" },
-    "compatibleWith": ["prod_tool_001", "prod_hard_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_hard_003",
-    "sku": "HRD-HINGE-REP",
-    "name": "Cabinet Hinge Repair Plate Kit (Set of 4)",
-    "description": "Stainless steel mending brackets that convert damaged hinge mounting screw holes into secure reinforced anchor zones.",
-    "category": "Hardware",
-    "subcategory": "Cabinet Hardware",
-    "price": 299,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["hinge repair", "repair plate", "cabinet fix", "mounting plate", "damaged holes"],
-    "useCases": ["broken hinge mounting", "stripped screw hole fix", "cabinet door reinforcement"],
-    "specifications": { "material": "Stainless Steel", "dimensions": "90x90mm", "includesScrews": true },
-    "compatibleWith": ["prod_hard_002", "prod_tool_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_hard_004",
-    "sku": "HRD-HOOK-ADH",
-    "name": "Heavy-Duty Stainless Steel Adhesive Hooks (6-Pack)",
-    "description": "Waterproof brushed 304 stainless steel hooks with strong industrial acrylic backing. Holds up to 5 kg per hook without drilling.",
-    "category": "Hardware",
-    "subcategory": "Hooks & Hangers",
-    "price": 329,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["hooks", "adhesive", "no drill", "bathroom", "kitchen", "hanging"],
-    "useCases": ["towel hanging", "kitchen utensils", "key holder"],
-    "specifications": { "maxLoad": "5kg", "waterproof": true },
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSAPPACHATTY3MMWITHSSLIDMC8160.png?v=1786025378",
+    "tags": [
+      "Appachatty",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Appachatty",
+      "MR PLUS APPACHATTY 3MM WITH S S LID MC 8160",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-appachatty-3mm-with-s-s-lid-mc-8160",
+      "shopifyId": "9442742829270"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_hard_005",
-    "sku": "HRD-TAPE-NANO",
-    "name": "Double-Sided Heavy-Duty Nano Gel Tape (3 Meter)",
-    "description": "Washable, reusable, transparent acrylic gel adhesive tape with strong grip on glass, tiles, wood, and metal surfaces.",
-    "category": "Hardware",
-    "subcategory": "Adhesives & Tapes",
-    "price": 249,
-    "image": "https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=500&q=80",
-    "tags": ["nano tape", "double sided", "adhesive", "mounting", "reusable"],
-    "useCases": ["power strip mounting", "carpet securing", "picture mounting"],
-    "specifications": { "width": "30mm", "thickness": "2mm", "length": "3m" },
-    "compatibleWith": ["prod_stor_006"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_stor_001",
-    "sku": "STR-BOX-BSC",
-    "name": "Storage Box Basic (25L Stackable with Lid)",
-    "description": "Sturdy translucent polypropylene utility storage container with snap-lock handles for closet and pantry organization.",
-    "category": "Storage",
-    "subcategory": "Storage Bins & Boxes",
-    "price": 499,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["storage box", "basic", "bin", "stackable", "organization", "budget choice"],
-    "useCases": ["closet storage", "seasonal clothing", "toy organization"],
-    "specifications": { "capacity": "25L", "dimensions": "44x32x22cm", "material": "BPA-Free PP" },
-    "compatibleWith": ["prod_stor_002", "prod_stor_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_stor_002",
-    "sku": "STR-BOX-PLS",
-    "name": "Storage Box Plus (40L Stackable with Wheels)",
-    "description": "Reinforced heavy-duty storage tote with smooth-rolling caster wheels, dual latches, and modular stacking grooves.",
-    "category": "Storage",
-    "subcategory": "Storage Bins & Boxes",
+    "id": "gid://shopify/Product/9442742862038",
+    "sku": "3",
+    "name": "MR PLUS FRYPAN 24 CM IB MC 8601",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Fry pan",
+    "subcategory": "Fry pan",
     "price": 699,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["storage box", "plus", "wheels", "stackable", "best value"],
-    "useCases": ["underbed storage", "garage tools", "bulk pantry"],
-    "specifications": { "capacity": "40L", "dimensions": "56x38x26cm", "wheels": 4 },
-    "compatibleWith": ["prod_stor_001", "prod_stor_003"],
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSFRYPAN24CMIBMC8601.png?v=1786025568",
+    "tags": [
+      "Fry pan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fry pan",
+      "MR PLUS FRYPAN 24 CM IB MC 8601",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-frypan-24-cm-ib-mc-8601",
+      "shopifyId": "9442742862038"
+    },
+    "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_stor_003",
-    "sku": "STR-BOX-PRO",
-    "name": "Storage Box Pro (60L Heavy-Duty Weatherproof Container)",
-    "description": "Impact-resistant industrial structural foam container with silicone gasket seal to lock out moisture, dust, and pests.",
-    "category": "Storage",
-    "subcategory": "Storage Bins & Boxes",
-    "price": 999,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["storage box", "pro", "weatherproof", "heavy duty", "premium"],
-    "useCases": ["outdoor patio storage", "garage tools", "long term archiving"],
-    "specifications": { "capacity": "60L", "dimensions": "64x44x32cm", "weatherproof": true },
-    "compatibleWith": ["prod_stor_001", "prod_stor_002"],
+    "id": "gid://shopify/Product/9442742927574",
+    "sku": "4",
+    "name": "MR PLUS FRYPAN 26 CM IB MC8602",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Fry pan",
+    "subcategory": "Fry pan",
+    "price": 799,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSFRYPAN26CMIBMC8602.png?v=1786025661",
+    "tags": [
+      "Fry pan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fry pan",
+      "MR PLUS FRYPAN 26 CM IB MC8602",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-frypan-26-cm-ib-mc8602",
+      "shopifyId": "9442742927574"
+    },
+    "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_stor_004",
-    "sku": "STR-SHLF-4T",
-    "name": "4-Tier Heavy-Duty Steel Shelving Unit (150cm x 80cm)",
-    "description": "Boltless industrial grade steel wire shelf rack with adjustable heights. Holds up to 100 kg per tier.",
-    "category": "Storage",
-    "subcategory": "Shelving & Racks",
-    "price": 2899,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["shelving", "rack", "steel", "4-tier", "garage", "kitchen pantry"],
-    "useCases": ["kitchen storage", "balcony plant stand", "garage organization"],
-    "specifications": { "dimensions": "150x80x40cm", "loadCapacity": "400kg total" },
-    "compatibleWith": ["prod_stor_001", "prod_stor_002"],
+    "id": "gid://shopify/Product/9442742960342",
+    "sku": "5",
+    "name": "MR PLUS FRYPAN 28 CM IB MC8603",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Fry pan",
+    "subcategory": "Fry pan",
+    "price": 899,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSFRYPAN28CMIBMC8603.png?v=1786025737",
+    "tags": [
+      "Fry pan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fry pan",
+      "MR PLUS FRYPAN 28 CM IB MC8603",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-frypan-28-cm-ib-mc8603",
+      "shopifyId": "9442742960342"
+    },
+    "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_stor_005",
-    "sku": "STR-CART-3T",
-    "name": "3-Tier Rolling Utility Storage Cart with Wheels",
-    "description": "Powder-coated metal organizer cart with breathable mesh baskets and 360-degree lockable swivel casters.",
-    "category": "Storage",
-    "subcategory": "Mobile Storage",
+    "id": "gid://shopify/Product/9442742993110",
+    "sku": "6",
+    "name": "MR PLUS KADAI 24 CM WITH GLASS LID I/B MC 8141",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Kadai",
+    "subcategory": "Kadai",
+    "price": 899,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSKADAI24CMWITHGLASSLIDI_BMC8141.png?v=1786024939",
+    "tags": [
+      "Kadai",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kadai",
+      "MR PLUS KADAI 24 CM WITH GLASS LID I/B MC 8141",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-kadai-24-cm-with-glass-lid-i-b-mc-8141",
+      "shopifyId": "9442742993110"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743025878",
+    "sku": "7",
+    "name": "MR PLUS KADAI 26 CM WITH GLASS LID I/B MC8142",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Kadai",
+    "subcategory": "Kadai",
+    "price": 1090,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSKADAI26CMWITHGLASSLIDI_BMC8142.png?v=1786025045",
+    "tags": [
+      "Kadai",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kadai",
+      "MR PLUS KADAI 26 CM WITH GLASS LID I/B MC8142",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-kadai-26-cm-with-glass-lid-i-b-mc8142",
+      "shopifyId": "9442743025878"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743058646",
+    "sku": "8",
+    "name": "MR PLUS  KADAI 28 CM WITH GLASS LID I/B MC8143",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Kadai",
+    "subcategory": "Kadai",
+    "price": 1125,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSKADAI28CMWITHGLASSLIDI_BMC8143.png?v=1786025175",
+    "tags": [
+      "Kadai",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kadai",
+      "MR PLUS  KADAI 28 CM WITH GLASS LID I/B MC8143",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-kadai-28-cm-with-glass-lid-i-b-mc8143",
+      "shopifyId": "9442743058646"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743091414",
+    "sku": "9",
+    "name": "MR PLUS TAWA 26CM IB MC 8220",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Tawa",
+    "subcategory": "Tawa",
+    "price": 599,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSTAWA26CMIBMC8220.png?v=1786030429",
+    "tags": [
+      "Tawa",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Tawa",
+      "MR PLUS TAWA 26CM IB MC 8220",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-tawa-26cm-ib-mc-8220",
+      "shopifyId": "9442743091414"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743124182",
+    "sku": "10",
+    "name": "MR PLUS TAWA 28 CM IB MR 8221",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster. Induction base.",
+    "category": "Tawa",
+    "subcategory": "Tawa",
+    "price": 699,
+    "image": "/White.png",
+    "tags": [
+      "Tawa",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Tawa",
+      "MR PLUS TAWA 28 CM IB MR 8221",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-tawa-28-cm-ib-mr-8221",
+      "shopifyId": "9442743124182"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743156950",
+    "sku": "11",
+    "name": "MR PLUS PATHIRI TAWA ROUND - 330 MC8162",
+    "description": "Pathiri Tawa RD 33. Nonstick Coating. Strong and Sturdy Handle. Heats Evenly. Cooks Faster",
+    "category": "Pathiri Tawa",
+    "subcategory": "Pathiri Tawa",
+    "price": 1299,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSPATHIRITAWAROUND-330MC8162.png?v=1786030534",
+    "tags": [
+      "Pathiri Tawa",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Pathiri Tawa",
+      "MR PLUS PATHIRI TAWA ROUND - 330 MC8162",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-pathiri-tawa-round-330-mc8162",
+      "shopifyId": "9442743156950"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743189718",
+    "sku": "12",
+    "name": "MR PLUS  NON STICK COMBO MC8441",
+    "description": "Triple Layered Scratch Resistant Non Stick Coating. 3 mm Thickness, Strong & Sturdy Handle. Energy Saving Bottom. Cooks Faster.",
+    "category": "KTF Combo",
+    "subcategory": "KTF Combo",
+    "price": 1299,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/WhatsApp_Image_2026-07-26_at_12.51.06_PM.jpg?v=1785050574",
+    "tags": [
+      "KTF Combo",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "KTF Combo",
+      "MR PLUS  NON STICK COMBO MC8441",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-non-stick-combo-mc8441",
+      "shopifyId": "9442743189718"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743222486",
+    "sku": "13",
+    "name": "MR PLUS KTF  4 PCS NON STICK COMBO IB MC 8440",
+    "description": "Induction based 4 Piece set. Kadai-24 cm , Tawa-26 cm and Frypan -24 cm with Glass Lid",
+    "category": "KTF Combo",
+    "subcategory": "KTF Combo",
     "price": 1499,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["rolling cart", "3-tier", "mobile", "kitchen organizer", "apartment essential"],
-    "useCases": ["kitchen spice trolley", "balcony tool caddy", "bathroom storage"],
-    "specifications": { "dimensions": "86x45x35cm", "material": "Carbon Steel" },
-    "compatibleWith": ["prod_stor_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_stor_006",
-    "sku": "STR-CABL-BOX",
-    "name": "Minimalist Cable Management & Wire Organizer Box",
-    "description": "Sleek fire-retardant ABS enclosure designed to conceal messy power strips, surge protectors, and charging cable clutter neatly.",
-    "category": "Storage",
-    "subcategory": "Cable & Wire Organization",
-    "price": 499,
-    "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=500&q=80",
-    "tags": ["cable organizer", "cable box", "wire management", "desk tidy", "cord hider"],
-    "useCases": ["organize loose charging cables", "hide power strip under desk", "pet/child cable protection"],
-    "specifications": { "dimensions": "32x13x13cm", "material": "Fire-Retardant ABS", "slots": "Dual Side Pass-Through" },
-    "compatibleWith": ["prod_stor_007", "prod_elec_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_stor_007",
-    "sku": "STR-CABL-CLIP",
-    "name": "Silicone Cable Management Clips & Adhesive Ties (Set of 20)",
-    "description": "Soft flexible silicone desktop cord holders and adjustable hook-and-loop self-adhesive cable strap ties.",
-    "category": "Storage",
-    "subcategory": "Cable & Wire Organization",
-    "price": 249,
-    "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=500&q=80",
-    "tags": ["cable clips", "cable ties", "wire organizer", "silicone holders", "cord organizer"],
-    "useCases": ["desk cable routing", "phone charger bundling", "appliance cord wrapping"],
-    "specifications": { "pieces": 20, "includes": "10 Clips + 10 Velcro Straps" },
-    "compatibleWith": ["prod_stor_006"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_kit_001",
-    "sku": "KIT-COOK-SS7",
-    "name": "Pro-Grade 7-Piece Tri-Ply Stainless Steel Cookware Set",
-    "description": "Induction-compatible frying pan, saucepan with lid, stockpot with lid, and sauté pan with aluminum core for even heat distribution.",
-    "category": "Kitchen",
-    "subcategory": "Cookware",
-    "price": 3899,
-    "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
-    "tags": ["cookware", "kitchen set", "pots and pans", "stainless steel", "apartment essential"],
-    "useCases": ["daily cooking", "new apartment setup"],
-    "specifications": { "pieces": 7, "inductionCompatible": true, "dishwasherSafe": true },
-    "compatibleWith": ["prod_kit_002"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_kit_002",
-    "sku": "KIT-UTEN-SIL",
-    "name": "Heat-Resistant Silicone Kitchen Utensil Set (10-Piece)",
-    "description": "Food-grade BPA-free silicone spatulas, ladles, tongs, whisk, and slotted spoon with natural acacia wood handles and holding canister.",
-    "category": "Kitchen",
-    "subcategory": "Kitchen Tools & Utensils",
-    "price": 899,
-    "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
-    "tags": ["kitchen utensils", "silicone", "spatula", "acacia wood", "apartment essential"],
-    "useCases": ["non-stick cookware cooking", "baking"],
-    "specifications": { "pieces": 10, "heatResistant": "Up to 230 C" },
-    "compatibleWith": ["prod_kit_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_kit_003",
-    "sku": "KIT-RACK-2T",
-    "name": "2-Tier Rust-Proof Stainless Steel Dish Drying Rack",
-    "description": "Large capacity dish drainer with automatic swivel drainage spout, cutlery holder, and cutting board attachment.",
-    "category": "Kitchen",
-    "subcategory": "Kitchen Organization",
-    "price": 1299,
-    "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
-    "tags": ["dish rack", "drying rack", "stainless steel", "kitchen organizer", "apartment essential"],
-    "useCases": ["countertop dish drying", "kitchen decluttering"],
-    "specifications": { "dimensions": "42x30x34cm", "material": "304 Stainless Steel" },
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/WhatsAppImage2026-07-26at12.50.53PM.jpg?v=1785050514",
+    "tags": [
+      "KTF Combo",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "KTF Combo",
+      "MR PLUS KTF  4 PCS NON STICK COMBO IB MC 8440",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-ktf-4-pcs-non-stick-combo-ib-mc-8440",
+      "shopifyId": "9442743222486"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_kit_004",
-    "sku": "KIT-CONT-GLS",
-    "name": "Airtight Borosilicate Glass Food Storage Containers (Set of 6)",
-    "description": "Leak-proof snap locking lids with silicone seals. Oven, microwave, freezer, and dishwasher safe glass bowls.",
-    "category": "Kitchen",
-    "subcategory": "Food Storage",
-    "price": 1199,
-    "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
-    "tags": ["food containers", "glass storage", "airtight", "meal prep", "apartment essential"],
-    "useCases": ["meal prep", "leftover storage", "pantry organization"],
-    "specifications": { "pieces": 6, "capacities": "370ml to 1040ml", "material": "Borosilicate Glass" },
+    "id": "gid://shopify/Product/9442743255254",
+    "sku": "14",
+    "name": "MR PLUS BIRIYANI POT 6 LTR GLASS LID",
+    "description": "Non Stick Coating. Energy Saving Bottom. Heats Evenly and Cooks Faster. Strong & Sturdy Handle",
+    "category": "Biriyani Pot",
+    "subcategory": "Biriyani Pot",
+    "price": 1590,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSBIRIYANIPOT6LTRGLASSLID.png?v=1786029152",
+    "tags": [
+      "Biriyani Pot",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Biriyani Pot",
+      "MR PLUS BIRIYANI POT 6 LTR GLASS LID",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-biriyani-pot-6-ltr-glass-lid",
+      "shopifyId": "9442743255254"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743288022",
+    "sku": "15",
+    "name": "MR PLUS BIRIYANI POT 8 LTR GLASS LID",
+    "description": "Non Stick Coating. Energy Saving Bottom. Heats Evenly and Cooks Faster. Strong & Sturdy Handle",
+    "category": "Biriyani Pot",
+    "subcategory": "Biriyani Pot",
+    "price": 1790,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSBIRIYANIPOT8LTRGLASSLID.png?v=1786029231",
+    "tags": [
+      "Biriyani Pot",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Biriyani Pot",
+      "MR PLUS BIRIYANI POT 8 LTR GLASS LID",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-biriyani-pot-8-ltr-glass-lid",
+      "shopifyId": "9442743288022"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743320790",
+    "sku": "16",
+    "name": "MR PLUS BIRIYANI POT 10 LTR GLASS LID",
+    "description": "Non Stick Coating. Energy Saving Bottom. Heats Evenly and Cooks Faster. Strong & Sturdy Handle",
+    "category": "Biriyani Pot",
+    "subcategory": "Biriyani Pot",
+    "price": 1990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSBIRIYANIPOT10LTRGLASSLID.png?v=1786029335",
+    "tags": [
+      "Biriyani Pot",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Biriyani Pot",
+      "MR PLUS BIRIYANI POT 10 LTR GLASS LID",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-biriyani-pot-10-ltr-glass-lid",
+      "shopifyId": "9442743320790"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743353558",
+    "sku": "17",
+    "name": "MR PLUS BIRIYANI POT 12 LTR WITH DUM LID",
+    "description": "Non Stick Coating. Energy Saving Bottom. Heats Evenly and Cooks Faster. Strong & Sturdy Handle",
+    "category": "Biriyani Pot",
+    "subcategory": "Biriyani Pot",
+    "price": 2290,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSBIRIYANIPOT12LTRWITHDUMLID.png?v=1786029411",
+    "tags": [
+      "Biriyani Pot",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Biriyani Pot",
+      "MR PLUS BIRIYANI POT 12 LTR WITH DUM LID",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-biriyani-pot-12-ltr-with-dum-lid",
+      "shopifyId": "9442743353558"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743386326",
+    "sku": "18",
+    "name": "MR PLUS 3 LTR IB PRESSURE COOKER MC.8304",
+    "description": "3 Ltr Alumnium Presssure Cooker. Induction Base. High Grade Virgin Alumnium. Metal Safety Valve & Safe Lid Locking System.",
+    "category": "Pressure Cooker",
+    "subcategory": "Pressure Cooker",
+    "price": 1099,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/8304.png?v=1785049696",
+    "tags": [
+      "Pressure Cooker",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Pressure Cooker",
+      "MR PLUS 3 LTR IB PRESSURE COOKER MC.8304",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-3-ltr-ib-pressure-cooker-mc-8304",
+      "shopifyId": "9442743386326"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_kit_005",
-    "sku": "KIT-SINK-ORG",
-    "name": "Expandable Under-Sink 2-Tier Organizer Rack",
-    "description": "Adjustable width frame that routes around sink plumbing pipes with sliding pull-out drawers and utility hooks.",
-    "category": "Kitchen",
-    "subcategory": "Kitchen Organization",
-    "price": 699,
-    "image": "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500&q=80",
-    "tags": ["under sink", "organizer", "kitchen storage", "bathroom storage", "space saver"],
-    "useCases": ["under sink cleaning supplies", "cabinet decluttering"],
-    "specifications": { "adjustableWidth": "50-70cm", "material": "Reinforced ABS + Steel" },
+    "id": "gid://shopify/Product/9442743419094",
+    "sku": "19",
+    "name": "MR PLUS 5 LTR IB PRESSURE COOKER MC 8306",
+    "description": "5 Ltr Alumnium Presssure Cooker. Induction Base. High Grade Virgin Alumnium. Metal Safety Valve & Safe Lid Locking System.",
+    "category": "Pressure Cooker",
+    "subcategory": "Pressure Cooker",
+    "price": 1399,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUS5LTRIBPRESSURECOOKERMC8306.png?v=1786024732",
+    "tags": [
+      "Pressure Cooker",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Pressure Cooker",
+      "MR PLUS 5 LTR IB PRESSURE COOKER MC 8306",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-5-ltr-ib-pressure-cooker-mc-8306",
+      "shopifyId": "9442743419094"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_bath_001",
-    "sku": "BTH-CADDY-SS",
-    "name": "3-Tier Rust-Proof Shower Caddy Hanging Organizer",
-    "description": "Electropolished stainless steel shower organizer with extra-wide baskets for shampoo bottles, soap tray, and razor hooks.",
-    "category": "Bathroom",
-    "subcategory": "Bathroom Accessories",
-    "price": 849,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["shower caddy", "bathroom storage", "rust proof", "hanging", "apartment essential"],
-    "useCases": ["shower bottle organization", "soap storage"],
-    "specifications": { "dimensions": "65x28x12cm", "mounting": "Over Showerhead or Adhesive" },
-    "compatibleWith": ["prod_hard_004"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_bath_002",
-    "sku": "BTH-MAT-MEM",
-    "name": "Ultra-Plush Quick-Dry Memory Foam Bath Mat Set",
-    "description": "Super absorbent coral velvet microfiber bath rugs with non-slip SBR rubber backing for superior wet floor traction.",
-    "category": "Bathroom",
-    "subcategory": "Bath Linens",
-    "price": 549,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["bath mat", "memory foam", "non slip", "quick dry", "apartment essential"],
-    "useCases": ["bathroom floor comfort", "slipping prevention"],
-    "specifications": { "pieces": 2, "sizes": "50x80cm + 40x60cm", "machineWashable": true },
+    "id": "gid://shopify/Product/9442743451862",
+    "sku": "20",
+    "name": "MR PLUS 3 LTR SS PRESSURE COOKER MC 8163",
+    "description": "3 Ltr SS Presssure Cooker. Induction Base. Metal Safety Valve & Safe Lid Locking System.",
+    "category": "Pressure Cooker",
+    "subcategory": "Pressure Cooker",
+    "price": 1699,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUS3LTRSSPRESSURECOOKERMC8163.png?v=1786024624",
+    "tags": [
+      "Pressure Cooker",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Pressure Cooker",
+      "MR PLUS 3 LTR SS PRESSURE COOKER MC 8163",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-3-ltr-ss-pressure-cooker-mc-8163",
+      "shopifyId": "9442743451862"
+    },
     "compatibleWith": [],
-    "stockStatus": "in_stock"
+    "stockStatus": "out_of_stock"
   },
   {
-    "id": "prod_bath_003",
-    "sku": "BTH-HEAD-ECO",
-    "name": "High-Pressure Water-Saving Ionic Filter Showerhead",
-    "description": "Laser-perforated micro nozzle plate delivers up to 200% higher water velocity while reducing water consumption by 35%.",
-    "category": "Bathroom",
-    "subcategory": "Plumbing & Fixtures",
-    "price": 699,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["showerhead", "water saving", "high pressure", "filter", "apartment upgrade"],
-    "useCases": ["low water pressure fix", "hard water filtration"],
-    "specifications": { "modes": 3, "thread": "Standard G1/2", "filter": "Mineral Beads included" },
+    "id": "gid://shopify/Product/9442743484630",
+    "sku": "21",
+    "name": "MR PLUS 5 LTR PRESSURE COOKER IB MC 8165",
+    "description": "5 Ltr SS Presssure Cooker. Induction Base. Metal Safety Valve & Safe Lid Locking System.",
+    "category": "Pressure Cooker",
+    "subcategory": "Pressure Cooker",
+    "price": 1999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/8165_1623b688-abf9-469e-a2ef-34319487d539.png?v=1785049627",
+    "tags": [
+      "Pressure Cooker",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Pressure Cooker",
+      "MR PLUS 5 LTR PRESSURE COOKER IB MC 8165",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-5-ltr-pressure-cooker-ib-mc-8165",
+      "shopifyId": "9442743484630"
+    },
     "compatibleWith": [],
-    "stockStatus": "in_stock"
+    "stockStatus": "out_of_stock"
   },
   {
-    "id": "prod_elec_001",
-    "sku": "ELC-STRIP-LED5",
-    "name": "Smart Wi-Fi RGBW Outdoor/Indoor LED Strip Lights (5 Meter)",
-    "description": "Waterproof IP65 dimmable color-changing LED strip with app control, music sync, and compatibility with voice assistants.",
-    "category": "Electrical",
-    "subcategory": "Lighting",
-    "price": 1199,
-    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
-    "tags": ["led lights", "lighting", "strip lights", "smart", "balcony lighting", "rgb"],
-    "useCases": ["balcony ambient lighting", "under cabinet glow", "bedroom accent"],
-    "specifications": { "length": "5m", "waterproof": "IP65", "voltage": "12V Adapter Included" },
-    "compatibleWith": ["prod_elec_003"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_elec_002",
-    "sku": "ELC-BULB-SMART",
-    "name": "Smart LED Warm/Cool White Bulbs (Set of 2)",
-    "description": "E27 base 9W smart dimmable bulbs (800 lumens) offering adjustable color temperature from cozy warm 2700K to bright crisp 6500K.",
-    "category": "Electrical",
-    "subcategory": "Lighting",
-    "price": 699,
-    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
-    "tags": ["smart bulb", "led", "lighting", "warm white", "apartment essential"],
-    "useCases": ["living room lighting", "bedside reading lamp"],
-    "specifications": { "base": "E27", "wattage": "9W (60W equivalent)", "lumens": "800lm" },
-    "compatibleWith": [],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_elec_003",
-    "sku": "ELC-SURGE-6P",
-    "name": "Heavy-Duty 6-Outlet Surge Protector Power Strip with USB-C",
-    "description": "1000 Joules surge protection rating with 2.0 meter braided extension cord, 4 AC sockets, 2 USB-A ports, and 1 20W PD USB-C port.",
-    "category": "Electrical",
-    "subcategory": "Extension Cords & Power",
-    "price": 799,
-    "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=500&q=80",
-    "tags": ["power strip", "surge protector", "extension cord", "usb-c", "apartment essential"],
-    "useCases": ["home office desk setup", "entertainment center power", "safe electronics connection"],
-    "specifications": { "cordLength": "2.0m", "surgeProtection": "1000J", "maxLoad": "2500W" },
-    "compatibleWith": ["prod_stor_006", "prod_stor_007"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_elec_004",
-    "sku": "ELC-SOLAR-WAL2",
-    "name": "Outdoor Solar Motion Sensor Wall Lights (Pack of 2)",
-    "description": "High-efficiency monocrystalline solar panels with 120-degree motion detection and dusk-to-dawn automatic illumination.",
-    "category": "Electrical",
-    "subcategory": "Lighting",
-    "price": 899,
-    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
-    "tags": ["solar lights", "lighting", "outdoor", "motion sensor", "balcony", "waterproof"],
-    "useCases": ["balcony security lighting", "garden path illumination", "patio lighting"],
-    "specifications": { "solarPanel": "5.5V/1.5W", "waterproof": "IP65", "battery": "1800mAh Li-Ion" },
-    "compatibleWith": ["prod_gard_001", "prod_gard_002"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_home_001",
-    "sku": "HME-RUG-BOHE",
-    "name": "Handwoven Cotton Bohemian Outdoor/Indoor Rug (120x180cm)",
-    "description": "Reversible geometric woven flatweave area rug with decorative fringed tassels. Easy to vacuum and spot clean.",
-    "category": "Household",
-    "subcategory": "Rugs & Mats",
-    "price": 1199,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["rug", "balcony rug", "bohemian", "cotton", "apartment decor", "outdoor rug"],
-    "useCases": ["balcony floor decor", "living room centerpiece", "cozy seating area"],
-    "specifications": { "dimensions": "120x180cm", "material": "100% Cotton" },
-    "compatibleWith": ["prod_gard_001", "prod_gard_002"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_home_002",
-    "sku": "HME-SHLF-FLT",
-    "name": "Rustic Solid Pine Floating Wall Shelves (Set of 3)",
-    "description": "Kiln-dried natural pine wood boards with concealed heavy-duty steel mounting brackets and hardware.",
-    "category": "Household",
-    "subcategory": "Wall Decor & Storage",
+    "id": "gid://shopify/Product/9442743517398",
+    "sku": "22",
+    "name": "MR PLUS ELECTRICAL KETTLE MK 8110",
+    "description": "2L Stainless steel electric kettle 1)220V-240V 50-60Hz 1500w 2)power limit +5% -10% 3)1500 V high voltage test Indicator light: Red 4)copper aluminium power cable 3X0.75X75CM with BIS Plug 5)Anti Dry Design,single golden temperature control 6)logo:silk print on kettle, logo color:black 7)color box 8)inside kettle lid is steel material",
+    "category": "Kettle",
+    "subcategory": "Kettle",
     "price": 999,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["floating shelves", "wall shelf", "pine wood", "apartment decor", "storage"],
-    "useCases": ["display books and plants", "kitchen spice shelf", "living room accent"],
-    "specifications": { "lengths": "40cm, 50cm, 60cm", "depth": "15cm", "maxWeight": "12kg each" },
-    "compatibleWith": ["prod_tool_001", "prod_tool_003", "prod_hard_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_home_003",
-    "sku": "HME-CLOTH-MCR",
-    "name": "Ultra-Absorbent Microfiber Cleaning Cloths (Pack of 12)",
-    "description": "Streak-free, lint-free premium 300 GSM microfiber towels for kitchen counters, glass windows, and stainless steel appliances.",
-    "category": "Household",
-    "subcategory": "Cleaning Supplies",
-    "price": 299,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["cleaning cloths", "microfiber", "towels", "household cleaning", "apartment essential"],
-    "useCases": ["daily surface dusting", "window polishing", "spill cleanup"],
-    "specifications": { "count": 12, "dimensions": "30x30cm", "gsm": "300 GSM" },
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSELECTRICALKETTLEMK8110.png?v=1786030140",
+    "tags": [
+      "Kettle",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kettle",
+      "MR PLUS ELECTRICAL KETTLE MK 8110",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-electrical-kettle-mk-8110",
+      "shopifyId": "9442743517398"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_home_004",
-    "sku": "HME-BIN-SS12",
-    "name": "Soft-Close Fingerprint-Proof Stainless Steel Step Trash Can (12L)",
-    "description": "Compact cylindrical step pedal garbage can with removable inner plastic bucket and odor-trapping lid seal.",
-    "category": "Household",
-    "subcategory": "Waste Management",
-    "price": 1149,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["trash can", "garbage bin", "stainless steel", "step pedal", "apartment essential"],
-    "useCases": ["kitchen waste", "bathroom disposal", "home office bin"],
-    "specifications": { "capacity": "12L", "material": "Brushed Stainless Steel", "softClose": true },
+    "id": "gid://shopify/Product/9442743550166",
+    "sku": "23",
+    "name": "MR PLUS ELECTRICAL KETTLE MK 8111",
+    "description": "1.L Stainless steel electric kettle 1)220V-240V 50-60Hz 1500w 2)power limit +5% -10% 3)1500 V high voltage test Indicator light: Red 4)copper aluminium power cable 3X0.75X75CM with BIS Plug 5)Anti Dry Design,single golden temperature control 6)logo:silk print on kettle, logo color:black 7)color box 8)inside kettle lid is steel material",
+    "category": "Kettle",
+    "subcategory": "Kettle",
+    "price": 699,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSELECTRICALKETTLEMK8111.png?v=1786030026",
+    "tags": [
+      "Kettle",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kettle",
+      "MR PLUS ELECTRICAL KETTLE MK 8111",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-electrical-kettle-mk-8111",
+      "shopifyId": "9442743550166"
+    },
     "compatibleWith": [],
     "stockStatus": "in_stock"
   },
   {
-    "id": "prod_home_005",
-    "sku": "HME-LAMP-SOL",
-    "name": "Weatherproof Rattan Solar Lantern with LED Candle",
-    "description": "Hand-woven synthetic PE rattan outdoor lantern with realistic warm flickering solar LED candle pillar inside.",
-    "category": "Household",
-    "subcategory": "Outdoor Decor",
-    "price": 649,
-    "image": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80",
-    "tags": ["solar lantern", "balcony decor", "rattan", "lighting", "outdoor candle"],
-    "useCases": ["balcony tabletop decor", "evening ambiance"],
-    "specifications": { "dimensions": "25x18cm", "waterproof": "IP44", "autoOn": true },
-    "compatibleWith": ["prod_gard_001"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_auto_001",
-    "sku": "AUT-ORG-TRNK",
-    "name": "Collapsible Multi-Compartment Car Trunk Organizer",
-    "description": "Heavy-duty 600D Oxford waterproof fabric organizer with rigid bottom plates, non-slip rubber strips, and tie-down straps.",
-    "category": "Automotive",
-    "subcategory": "Car Organization",
-    "price": 799,
-    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    "tags": ["car organizer", "trunk box", "automotive storage", "collapsible"],
-    "useCases": ["car emergency kit storage", "grocery bag stabilization", "tool organization"],
-    "specifications": { "capacity": "55L", "compartments": 3, "material": "600D Oxford Polyester" },
-    "compatibleWith": ["prod_tool_002"],
-    "stockStatus": "in_stock"
-  },
-  {
-    "id": "prod_stat_001",
-    "sku": "STN-ORG-DSK",
-    "name": "Bamboo Desktop Organizer & Drawer Caddy",
-    "description": "Natural eco-friendly solid bamboo desk caddy featuring 6 divided compartments and 2 pull-out mini drawers for stationery.",
-    "category": "Stationery",
-    "subcategory": "Office Organization",
+    "id": "gid://shopify/Product/9442743582934",
+    "sku": "24",
+    "name": "MR PLUS ELECTRICAL KETTLE MK 8112",
+    "description": "1.8L Stainless steel electric kettle 1)220V-240V 50-60Hz 1500w 2)power limit +5% -10% 3)1500 V high voltage test Indicator light: Red 4)copper aluminium power cable 3X0.75X75CM with BIS Plug 5)Anti Dry Design,single golden temperature control 6)logo:silk print on kettle, logo color:black 7)color box 8)inside kettle lid is steel material",
+    "category": "Kettle",
+    "subcategory": "Kettle",
     "price": 599,
-    "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?w=500&q=80",
-    "tags": ["desk organizer", "bamboo caddy", "stationery", "office storage"],
-    "useCases": ["home office desk setup", "pen and notepad storage"],
-    "specifications": { "dimensions": "26x15x12cm", "material": "100% Solid Bamboo" },
-    "compatibleWith": ["prod_stor_006"],
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MRPLUSELECTRICALKETTLEMK8112.png?v=1786029945",
+    "tags": [
+      "Kettle",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Kettle",
+      "MR PLUS ELECTRICAL KETTLE MK 8112",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-electrical-kettle-mk-8112",
+      "shopifyId": "9442743582934"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743648470",
+    "sku": "25",
+    "name": "MR PLUS DIGITAL AIR FRYER MAF 8100",
+    "description": "Capacity- 5 ltr. 1250 W, Automatic On/Off Switch, Indicator Light. Ready Bell. Non Stick Coating. Non Skid rubber Feet. -240V-50/60HZ",
+    "category": "Air Fryer",
+    "subcategory": "Air Fryer",
+    "price": 5999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Air_Fryer.png?v=1785049083",
+    "tags": [
+      "Air Fryer",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Air Fryer",
+      "MR PLUS DIGITAL AIR FRYER MAF 8100",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-digital-air-fryer-maf-8100",
+      "shopifyId": "9442743648470"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743681238",
+    "sku": "26",
+    "name": "MR PLUS COCONUT SCRAPER MC 8300",
+    "description": "MR PLUS COCONUT SCRAPER MC 8300 by MR. Plus",
+    "category": "Coconut Scrapper",
+    "subcategory": "Coconut Scrapper",
+    "price": 2399,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_5.jpg?v=1786022250",
+    "tags": [
+      "Coconut Scrapper",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Coconut Scrapper",
+      "MR PLUS COCONUT SCRAPER MC 8300",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-coconut-scraper-mc-8300",
+      "shopifyId": "9442743681238"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743714006",
+    "sku": "27",
+    "name": "MR PLUS THREE BURNER GAS STOVE MG8703GS",
+    "description": "Energy Saving Burner. Tempered Glass. Easy Clean and Cook Faster. Brass Burner. Piano Finish Glass Top,Blue Flame Technology.",
+    "category": "Glass Top",
+    "subcategory": "Glass Top",
+    "price": 3299,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_011655d8-09f9-4fcb-b2bd-e1583dcf5bee.jpg?v=1786030885",
+    "tags": [
+      "Glass Top",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Glass Top",
+      "MR PLUS THREE BURNER GAS STOVE MG8703GS",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-three-burner-gas-stove-mg8703gs",
+      "shopifyId": "9442743714006"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743746774",
+    "sku": "28",
+    "name": "MR PLUS HANDHELD RECHARGEABLE FAN MF.6110",
+    "description": "MR PLUS HANDHELD RECHARGEABLE FAN MF.6110 by MR. Plus",
+    "category": "Hand Held Fan",
+    "subcategory": "Hand Held Fan",
+    "price": 699,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_4.jpg?v=1786022067",
+    "tags": [
+      "Hand Held Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Hand Held Fan",
+      "MR PLUS HANDHELD RECHARGEABLE FAN MF.6110",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plushandheld-rechargeable-fan-mf-6110",
+      "shopifyId": "9442743746774"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743812310",
+    "sku": "29",
+    "name": "MR PLUSHANDHELD MIST RECHARGEABLE FAN MF.6111",
+    "description": "MR PLUSHANDHELD MIST RECHARGEABLE FAN MF.6111 by MR. Plus",
+    "category": "Hand Held Fan",
+    "subcategory": "Hand Held Fan",
+    "price": 599,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/MC6110_a4b387a7-8aae-4c97-a182-1a9a6c3adebd.png?v=1785501413",
+    "tags": [
+      "Hand Held Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Hand Held Fan",
+      "MR PLUSHANDHELD MIST RECHARGEABLE FAN MF.6111",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plushandheld-mist-rechargeable-fan-mf-6111",
+      "shopifyId": "9442743812310"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743845078",
+    "sku": "30",
+    "name": "MR PLUS BLDC CEILING FAN MR 3202SL",
+    "description": "MR PLUS BLDC CEILING FAN MR 3202SL by MR. Plus",
+    "category": "BLDC Ceiling Fan",
+    "subcategory": "BLDC Ceiling Fan",
+    "price": 2799,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Bldc_77234071-d8de-4a92-80e8-aebb546463fc.png?v=1785048094",
+    "tags": [
+      "BLDC Ceiling Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "BLDC Ceiling Fan",
+      "MR PLUS BLDC CEILING FAN MR 3202SL",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bldc-ceiling-fan-mr-3202sl",
+      "shopifyId": "9442743845078"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743877846",
+    "sku": "31",
+    "name": "MR PLUS BLDC CEILING FAN MR 3202BL",
+    "description": "MR PLUS BLDC CEILING FAN MR 3202BL by MR. Plus",
+    "category": "BLDC Ceiling Fan",
+    "subcategory": "BLDC Ceiling Fan",
+    "price": 2799,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Bldc_77234071-d8de-4a92-80e8-aebb546463fc.png?v=1785048094",
+    "tags": [
+      "BLDC Ceiling Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "BLDC Ceiling Fan",
+      "MR PLUS BLDC CEILING FAN MR 3202BL",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bldc-ceiling-fan-mr-3202bl",
+      "shopifyId": "9442743877846"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743910614",
+    "sku": "32",
+    "name": "MR PLUS BLDC CEILING FAN MR 3203DB",
+    "description": "MR PLUS BLDC CEILING FAN MR 3203DB by MR. Plus",
+    "category": "BLDC Ceiling Fan",
+    "subcategory": "BLDC Ceiling Fan",
+    "price": 2399,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_1_97e10ad8-4bf3-4a50-a920-a311a8292e35.jpg?v=1786030975",
+    "tags": [
+      "BLDC Ceiling Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "BLDC Ceiling Fan",
+      "MR PLUS BLDC CEILING FAN MR 3203DB",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bldc-ceiling-fan-mr-3203db",
+      "shopifyId": "9442743910614"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743943382",
+    "sku": "33",
+    "name": "MR PLUS BLDC CEILING FAN MR 3203DW",
+    "description": "MR PLUS BLDC CEILING FAN MR 3203DW by MR. Plus",
+    "category": "BLDC Ceiling Fan",
+    "subcategory": "BLDC Ceiling Fan",
+    "price": 2399,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_3.jpg?v=1786021148",
+    "tags": [
+      "BLDC Ceiling Fan",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "BLDC Ceiling Fan",
+      "MR PLUS BLDC CEILING FAN MR 3203DW",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bldc-ceiling-fan-mr-3203dw",
+      "shopifyId": "9442743943382"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442743976150",
+    "sku": "34",
+    "name": "MR PLUS FULLY AUTOMATIC FRONT LOAD WASHING MACHINE MRFWM7001SM",
+    "description": "Energy Efficiency Class-BEE 5 Star. Silver Colour. 7 KG Washing Machine with Full Function . Max Spin Speed-1000 RPM. Door open Angle-140°, Volume of Inner Tub-42 L. Rated Power-1850 W. Door Lock, Child Lock and Remaining Time -Display. Anti Foam Control, Memory function, Overheating control, Overflow control and Auto Balancing System.",
+    "category": "Fully Automatic Washing Machine",
+    "subcategory": "Fully Automatic Washing Machine",
+    "price": 0,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/7.png?v=1785501060",
+    "tags": [
+      "Fully Automatic Washing Machine",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fully Automatic Washing Machine",
+      "MR PLUS FULLY AUTOMATIC FRONT LOAD WASHING MACHINE MRFWM7001SM",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-fully-automatic-front-load-washing-machine-mrfwm7001sm",
+      "shopifyId": "9442743976150"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744041686",
+    "sku": "35",
+    "name": "MR PLUS 7.5KG SEMI AUTOMATIC WASHING MACHINE MW6275",
+    "description": "MR PLUS 7.5KG SEMI AUTOMATIC WASHING MACHINE MW6275 by MR. Plus",
+    "category": "Semi Automatic Washing Machine",
+    "subcategory": "Semi Automatic Washing Machine",
+    "price": 8999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1.jpg_3.jpg?v=1786031657",
+    "tags": [
+      "Semi Automatic Washing Machine",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Semi Automatic Washing Machine",
+      "MR PLUS 7.5KG SEMI AUTOMATIC WASHING MACHINE MW6275",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-7-5kg-semi-automatic-washing-machine-mw6275",
+      "shopifyId": "9442744041686"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744074454",
+    "sku": "36",
+    "name": "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8001 TL-8KG",
+    "description": "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8001 TL-8KG by MR. Plus",
+    "category": "Fully Automatic Washing Machine",
+    "subcategory": "Fully Automatic Washing Machine",
+    "price": 14990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1.jpg_2.jpg?v=1786031523",
+    "tags": [
+      "Fully Automatic Washing Machine",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fully Automatic Washing Machine",
+      "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8001 TL-8KG",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-fully-automatic-washing-machine-mw8001-tl-8kg",
+      "shopifyId": "9442744074454"
+    },
+    "compatibleWith": [],
+    "stockStatus": "out_of_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744107222",
+    "sku": "37",
+    "name": "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8501 TL -8.5 KG",
+    "description": "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8501 TL -8.5 KG by MR. Plus",
+    "category": "Fully Automatic Washing Machine",
+    "subcategory": "Fully Automatic Washing Machine",
+    "price": 16990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/7.png?v=1785501060",
+    "tags": [
+      "Fully Automatic Washing Machine",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Fully Automatic Washing Machine",
+      "MR PLUS FULLY AUTOMATIC WASHING MACHINE MW8501 TL -8.5 KG",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-fully-automatic-washing-machine-mw8501-tl-8-5-kg",
+      "shopifyId": "9442744107222"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744139990",
+    "sku": "38",
+    "name": "MR PLUS 32 SMART EDGE LED TV",
+    "description": "32 Inch Smart Led TV. A+ Grade Panel, ZBD. Software Version- River OS .Viewing Angle- 178°. Main Board-ATM, Ressolution- HD READY 1366 X 768p ,Availble Ports- 2HDMI, 2USB, Earphone out,AV1, AV2,COAX/CVBS OUT, RJ-45 in.. Memory-512 MB, Flash-4 GB",
+    "category": "LED Tv",
+    "subcategory": "LED Tv",
+    "price": 11990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_2_68d99eb8-d17a-41b9-95b7-bcb601cfb284.jpg?v=1786031437",
+    "tags": [
+      "LED Tv",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "LED Tv",
+      "MR PLUS 32 SMART EDGE LED TV",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-32-smart-edge-led-tv",
+      "shopifyId": "9442744139990"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744172758",
+    "sku": "39",
+    "name": "MR PLUS 43 SMART 2K SOLITAIRE LED TV",
+    "description": "43 Inch 2K Led TV. A+ Grade Panel, ZBD. Software Version-River OS. Android Version-9.Viewing Angle- 178°. Main Board-CVT, Ressolution- FHD 1920x1080 ,Availble Ports- 2 HDMI, 2USB, Earphone out,COAX/CVBS OUT, RJ-45 in,RF in, VGA in,PC Audio in,CVBS YPBPR in. Memory-1 GB, Flash-8 GB",
+    "category": "LED Tv",
+    "subcategory": "LED Tv",
+    "price": 16990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Cloud_tv_png.png?v=1785046250",
+    "tags": [
+      "LED Tv",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "LED Tv",
+      "MR PLUS 43 SMART 2K SOLITAIRE LED TV",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-43-smart-2k-solitaire-led-tv",
+      "shopifyId": "9442744172758"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744205526",
+    "sku": "40",
+    "name": "MR PLUS 55 GOOGLE LED TV G55UHD420",
+    "description": "55 Inch 4K Led TV. A+ Grade Panel, ZBD. Operating System Web OS.Viewing Angle- 178°. Magic Remote. Main Board-CVT, Ressolution- UHD 3840x2160, Availble Ports- 3 HDMI, 2 USB, Earphone out, Av1, RJ-45 IN, Optical, RF. Memory-1.5 GB, Flash-8 GB",
+    "category": "LED Tv",
+    "subcategory": "LED Tv",
+    "price": 39990,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_2.jpg?v=1786020351",
+    "tags": [
+      "LED Tv",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "LED Tv",
+      "MR PLUS 55 GOOGLE LED TV G55UHD420",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-55-google-led-tv-g55uhd420",
+      "shopifyId": "9442744205526"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744238294",
+    "sku": "41",
+    "name": "MR PLUS BLUETOOTH SPEAKER MR 1011",
+    "description": "PMPO- 4000W. Working Time-4 Hrs. 60W-RMS. Woofer5.25\" 2W. Tweeter-2\" 20W. Battery-18650/4000MAH Lion",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 7999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_1.jpg?v=1786020205",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS BLUETOOTH SPEAKER MR 1011",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bluetooth-speaker-mr-1011",
+      "shopifyId": "9442744238294"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744271062",
+    "sku": "42",
+    "name": "MR PLUS BLUETOOTH SPEAKER MR 5820",
+    "description": "PMPO- 6000W. Working Time-6 Hrs. 60W-RMS. Woofer5.25\" 2W. Tweeter-2\" 20W. Battery-18650/6000MAH Lion.",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 9999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1.jpg?v=1786019984",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS BLUETOOTH SPEAKER MR 5820",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-bluetooth-speaker-mr-5820",
+      "shopifyId": "9442744271062"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744303830",
+    "sku": "43",
+    "name": "MR PLUS SOUND BAR SPEAKER MR 5833",
+    "description": "2.1 Sound Bar Speaker. Speaker-2.5\" *2-30W. Voltage-100-240-50/60HZ",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 2999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/5833.png?v=1785046827",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS SOUND BAR SPEAKER MR 5833",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-sound-bar-speaker-mr-5833",
+      "shopifyId": "9442744303830"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744336598",
+    "sku": "44",
+    "name": "MR PLUS SOUND BAR SPEAKER MR 5841",
+    "description": "Optical 2.1 Sound Bar Speaker. AUX, USB & Bluetooth. Woofer-5.25-30W. Speaker-2.5\"*2-30W. Voltage Input-100-240V*50/60HZ",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 6999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1_jpg.jpg?v=1786031206",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS SOUND BAR SPEAKER MR 5841",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-sound-bar-speaker-mr-5841",
+      "shopifyId": "9442744336598"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744369366",
+    "sku": "45",
+    "name": "MR PLUS SOUND BAR SPEAKER MR 5842",
+    "description": "Wireless 5.1 SoundBar Speaker. RMS-50W Woofer-5\"-25W. Speaker-2.25\" 3-15W. Satelite Speaker-3\"*2-10W. Votage Input-100-240-50/60HZ.",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 8999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard1.jpg_1.jpg?v=1786031296",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS SOUND BAR SPEAKER MR 5842",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-sound-bar-speaker-mr-5842",
+      "shopifyId": "9442744369366"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744434902",
+    "sku": "46",
+    "name": "MR PLUS 2.1 SOUND BAR SPEAKER MR 2841",
+    "description": "2.1 Sound Bar Speaker. Pmpo-1200W. Voltage Frequency-220-240178°-50/60HZ. Bluetooth, USB, SD Card, AUX, HDMI.",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 9999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Untitled-1-03_4e841143-f2a1-4878-a583-66994a9dbb3c.png?v=1785501246",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS 2.1 SOUND BAR SPEAKER MR 2841",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-2-1-sound-bar-speaker-mr-2841",
+      "shopifyId": "9442744434902"
+    },
+    "compatibleWith": [],
+    "stockStatus": "in_stock"
+  },
+  {
+    "id": "gid://shopify/Product/9442744467670",
+    "sku": "47",
+    "name": "MR PLUS 2.1 SOUND BAR SPEAKER MR 2842",
+    "description": "2.1 Sound Bar Speaker. Pmpo-1200W. Voltage Frequency-220-240178°-50/60HZ. Bluetooth, USB, SD Card, AUX, HDMI.",
+    "category": "Home Theatre",
+    "subcategory": "Home Theatre",
+    "price": 8999,
+    "image": "https://cdn.shopify.com/s/files/1/0832/5863/8550/files/Artboard14_4x-80_jpg.jpg?v=1786015257",
+    "tags": [
+      "Home Theatre",
+      "MR Plus",
+      "mrplus"
+    ],
+    "useCases": [
+      "Home Theatre",
+      "MR PLUS 2.1 SOUND BAR SPEAKER MR 2842",
+      "MR Plus",
+      "mrplus"
+    ],
+    "specifications": {
+      "vendor": "MR Plus",
+      "currency": "INR",
+      "handle": "mr-plus-2-1-sound-bar-speaker-mr-2842",
+      "shopifyId": "9442744467670"
+    },
+    "compatibleWith": [],
     "stockStatus": "in_stock"
   }
 ]

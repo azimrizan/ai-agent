@@ -14,7 +14,7 @@ export const searchProductsTool = {
     }
   },
   execute: async (args: { query?: string; category?: string; maxPrice?: number; tags?: string[]; limit?: number }) => {
-    const products = productRepository.searchProducts(args);
+    const products = await productRepository.searchProductsAsync(args);
     return { products };
   }
 };
