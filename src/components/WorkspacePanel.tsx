@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAgentStore } from "../store/useAgentStore.js";
 import { ProductCard } from "./ProductCard.js";
-import { Sparkles } from "lucide-react";
 
 const LOADING_TEXTS = [
   "Searching products...",
@@ -25,17 +24,22 @@ export const WorkspacePanel: React.FC = () => {
   // 1. Cinematic Loading State (Apple Intelligence Text Animation)
   if (isThinking) {
     return (
-      <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-in fade-in duration-500">
-        <div className="flex flex-col items-center max-w-md mx-auto">
-          <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-6">
-            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+      <div className="flex flex-col items-center justify-center h-full p-4 sm:p-6 text-center animate-in fade-in duration-500 overflow-hidden">
+        <div className="flex flex-col items-center w-full max-w-2xl mx-auto my-auto py-2">
+          {/* Looping Transparent GIF Loader (Mobile untouched, Desktop optimized) */}
+          <div className="w-full max-w-[650px] h-[320px] sm:h-[460px] md:h-[350px] lg:h-[380px] flex items-center justify-center -mb-4 sm:-mb-6 md:-mb-2">
+            <img
+              src="/loader.gif"
+              alt="Loading animation"
+              className="w-full h-full object-contain transform scale-110 sm:scale-125 md:scale-100 lg:scale-105 drop-shadow-2xl"
+            />
           </div>
 
-          <h3 key={loadingIndex} className="text-xl sm:text-2xl font-semibold text-white tracking-tight animate-text-fade">
+          <h3 key={loadingIndex} className="text-xl sm:text-2xl font-semibold text-white tracking-tight animate-text-fade mt-1">
             {LOADING_TEXTS[loadingIndex]}
           </h3>
 
-          <p className="text-xs text-white/40 mt-3 font-normal">
+          <p className="text-xs sm:text-sm text-white/40 mt-2 font-normal pb-2">
             Curating your custom experience
           </p>
         </div>
@@ -73,7 +77,7 @@ export const WorkspacePanel: React.FC = () => {
           </h1>
 
           <p className="text-xs sm:text-sm md:text-base text-white/70 font-normal max-w-xl leading-relaxed tracking-normal">
-            Kerala's First AI Agent Shopping Experience.
+            Kerala's First Agentic AI Shopping Experience.
           </p>
         </div>
       </div>

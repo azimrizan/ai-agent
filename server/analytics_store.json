@@ -24,8 +24,10 @@
     "electronic items price range": 2,
     "show me pressure cookers ,000": 3,
     "appachatty": 1,
-    "find non-stick frypans and appachatty": 1,
-    "pressure cookers": 1
+    "find non-stick frypans and appachatty": 4,
+    "pressure cookers": 1,
+    "is this best": 1,
+    "is this best products?": 1
   },
   "unansweredQuestions": [],
   "mostRecommendedProducts": {},
@@ -33,11 +35,11 @@
   "imageUploads": 0,
   "budgetPlans": 0,
   "llmCalls": {
-    "groq": 15,
-    "gemini": 11
+    "groq": 25,
+    "gemini": 20
   },
   "toolCalls": {
-    "search_products": 41
+    "search_products": 46
   },
   "conversationsCompleted": 0
 }
