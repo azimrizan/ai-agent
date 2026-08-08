@@ -178,7 +178,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       const data = await response.json();
 
       const elapsed = Date.now() - startTime;
-      const minLoadingDuration = 2000;
+      const minLoadingDuration = 3200; // Allow 3D robot GIF animation to complete its full 3.2s loop
       if (elapsed < minLoadingDuration) {
         await new Promise((resolve) => setTimeout(resolve, minLoadingDuration - elapsed));
       }

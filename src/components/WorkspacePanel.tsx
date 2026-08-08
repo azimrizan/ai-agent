@@ -31,6 +31,8 @@ export const WorkspacePanel: React.FC = () => {
             <img
               src="/loader.gif"
               alt="Loading animation"
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-contain transform scale-110 sm:scale-125 md:scale-100 lg:scale-105 drop-shadow-2xl"
             />
           </div>
