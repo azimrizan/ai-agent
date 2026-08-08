@@ -2,7 +2,7 @@
   "topSearchedTerms": {
     "hi mrplus": 1,
     "fry pan": 6,
-    "tv": 3,
+    "tv": 5,
     "is it cheap and best?": 1,
     "i wnat tv": 1,
     "room size is standard": 1,
@@ -25,9 +25,10 @@
     "show me pressure cookers ,000": 3,
     "appachatty": 1,
     "find non-stick frypans and appachatty": 7,
-    "pressure cookers": 7,
+    "pressure cookers": 15,
     "is this best": 1,
-    "is this best products?": 1
+    "is this best products?": 1,
+    "show all categories": 1
   },
   "unansweredQuestions": [],
   "mostRecommendedProducts": {},
@@ -35,11 +36,12 @@
   "imageUploads": 0,
   "budgetPlans": 0,
   "llmCalls": {
-    "groq": 25,
-    "gemini": 20
+    "groq": 26,
+    "gemini": 21
   },
   "toolCalls": {
-    "search_products": 55
+    "search_products": 66,
+    "get_product_details": 1
   },
   "conversationsCompleted": 0
 }

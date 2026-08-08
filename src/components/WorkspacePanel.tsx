@@ -92,7 +92,7 @@ export const WorkspacePanel: React.FC = () => {
       {/* Header Info */}
       <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-2xl font-bold text-white tracking-wider font-neutral-face uppercase">
             {projectState.title || "Selected Products"}
           </h2>
           <p className="text-xs text-white/50 font-normal mt-1">

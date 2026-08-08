@@ -84,6 +84,18 @@ export function classifyIntent(userMessage: string, hasImage: boolean = false): 
     return { type: IntentType.COMPARE, query: textLower, isComplex: true };
   }
 
+  // 3.5. PRODUCT DETAIL / EXPLANATION
+  if (/tell\s+me\s+more\s+about|explain|tell\s+me\s+about|details\s+of|features\s+of|specs\s+of/i.test(textLower)) {
+    const targetProductQuery = textLower
+      .replace(/^(?:tell\s+me\s+more\s+about|explain|tell\s+me\s+about|details\s+of|features\s+of|specs\s+of)\s+/i, "")
+      .trim();
+    return {
+      type: IntentType.PRODUCT_DETAIL,
+      query: targetProductQuery,
+      isComplex: false,
+    };
+  }
+
   const { cleanQuery, extractedPrice } = parsePriceAndCleanQuery(textLower);
 
   // 4. PROJECT PLAN / BUDGET PLANNER

@@ -12,6 +12,30 @@ import { productRepository } from "../repositories/product.repository.js";
 import { AgentRequest, AgentResponse, ChatMessage } from "../schemas/agent.schema.js";
 import { ProjectState } from "../schemas/project.schema.js";
 
+function formatCleanTitle(query: string, maxPrice?: number): string {
+  const q = (query || "").trim().toLowerCase();
+  let categoryName = "";
+
+  if (/\btv\b|tvs|television|led tv|smart tv/i.test(q)) {
+    categoryName = "Smart LED TVs";
+  } else if (/cooker|pressure cooker/i.test(q)) {
+    categoryName = "Pressure Cookers";
+  } else if (/soundbar|speaker|bluetooth/i.test(q)) {
+    categoryName = "Audio & Soundbars";
+  } else if (/cookware|utensil|frypan|appachatty/i.test(q)) {
+    categoryName = "Cookware Collection";
+  } else if (/appliance|kitchen/i.test(q)) {
+    categoryName = "Kitchen Appliances";
+  } else if (q.length > 0) {
+    categoryName = q.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  } else {
+    categoryName = "Products";
+  }
+
+  const priceSuffix = maxPrice ? ` (Under ₹${maxPrice.toLocaleString()})` : "";
+  return `Featured MR.PLUS ${categoryName}${priceSuffix}`;
+}
+
 export class ToolRouter {
   public async routeRequest(
     req: AgentRequest,
@@ -69,6 +93,35 @@ export class ToolRouter {
       }
     }
 
+    if (intent.type === IntentType.PRODUCT_DETAIL) {
+      analyticsTracker.trackToolCall("get_product_details");
+      const searchRes = productRepository.searchProducts({ query: intent.query, limit: 1 });
+      const matched = searchRes[0];
+
+      if (matched) {
+        const specsText = matched.specifications
+          ? Object.entries(matched.specifications)
+              .filter(([k]) => k !== "variantId" && k !== "handle")
+              .map(([k, v]) => `- **${k.charAt(0).toUpperCase() + k.slice(1)}**: ${v}`)
+              .join("\n")
+          : "- **Warranty**: 1-Year Official MR.PLUS Kerala Warranty";
+
+        const text = `### 🌟 Product Breakdown: ${matched.name}\n\n**Price**: ₹${matched.price.toLocaleString()}\n**Category**: ${matched.category || "Home & Kitchen"}\n**Availability**: ${matched.stockStatus === "in_stock" ? "In Stock (Dispatches in 24 hrs)" : "Out of Stock"}\n\n**Overview**:\n${matched.description || "High-grade MR.PLUS appliance engineered for superior daily durability and thermal efficiency."}\n\n**Key Highlights & Specifications**:\n${specsText}\n\n- 🚚 **Delivery**: 2-3 Days express shipping across all Kerala districts\n- 🛡️ **Support & Warranty**: Full brand warranty with dedicated Kerala customer service`;
+
+        const updatedState = this.updateProjectStateWithProducts(
+          req.projectState,
+          [matched],
+          matched.name
+        );
+
+        return this.buildDirectResponse(text, updatedState, [
+          `Buy ${matched.name} now`,
+          "Show pressure cookers under ₹2000",
+          "Check non-stick frypans",
+        ]);
+      }
+    }
+
     if (
       intent.type === IntentType.SIMPLE_SEARCH ||
       intent.type === IntentType.COLLECTION_BROWSE ||
@@ -123,8 +176,8 @@ export class ToolRouter {
           intent.query,
           intent.extractedPrice
         );
-        const priceLabel = intent.extractedPrice ? ` under ₹${intent.extractedPrice.toLocaleString()}` : "";
-        const replyText = `### Featured MR.PLUS Products (${intent.query}${priceLabel})\n\nI found **${topProducts.length}** curated MR.PLUS products matching your request. Interactive cards are loaded on the left panel!\n\n- 🛍️ **Products Found**: ${topProducts.slice(0, 3).map(p => p.name || p.title).join(", ")}${topProducts.length > 3 ? "..." : ""}\n- 💰 **Price Filter**: ${intent.extractedPrice ? `Max ₹${intent.extractedPrice.toLocaleString()}` : "All Prices"}`;
+        const displayTitle = formatCleanTitle(intent.query, intent.extractedPrice);
+        const replyText = `### ${displayTitle}\n\nI found **${topProducts.length}** curated MR.PLUS products matching your request. Interactive cards are loaded on the left panel!\n\n- 🛍️ **Products Found**: ${topProducts.slice(0, 3).map(p => p.name || p.title).join(", ")}${topProducts.length > 3 ? "..." : ""}\n- 💰 **Price Filter**: ${intent.extractedPrice ? `Max ₹${intent.extractedPrice.toLocaleString()}` : "All Prices"}`;
         return this.buildDirectResponse(replyText, updatedState, [
           "Compare top items",
           "Show pressure cookers under ₹2000",
@@ -198,9 +251,7 @@ export class ToolRouter {
     return {
       ...baseState,
       id: baseState.id || "proj_default",
-      title: query
-        ? `Featured MR.PLUS Products (${query}${maxPrice ? ` under ₹${maxPrice.toLocaleString()}` : ""})`
-        : "Featured MR.PLUS Products",
+      title: query ? formatCleanTitle(query, maxPrice) : "Featured MR.PLUS Products",
       status: "planning",
       budget: {
         maximum: maxPrice || baseState.budget?.maximum || null,
