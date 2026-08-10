@@ -11,13 +11,20 @@ export const searchCollectionsTool = {
     required: ["collectionName"]
   },
   execute: async (args: { collectionName: string }) => {
-    const products = await productRepository.searchProductsAsync({ category: args.collectionName, limit: 12 });
+    const colResult = await productRepository.searchCollectionsAsync(args.collectionName);
+    const collectionUrl = colResult.collection?.url || `https://shop.mrplus.in/collections/${encodeURIComponent(args.collectionName.toLowerCase().replace(/\s+/g, "-"))}`;
+
     return {
       tool: "search_collections",
       success: true,
-      data: { products, collectionName: args.collectionName },
-      count: products.length,
+      data: {
+        collectionName: colResult.collection?.title || args.collectionName,
+        collectionUrl,
+        products: colResult.products,
+      },
+      count: colResult.products.length,
       source: "shopify_cache"
     };
   }
 };
+

@@ -97,12 +97,10 @@ export class GeminiService {
       modelName,
       "gemini-2.0-flash",
       "gemini-2.0-flash-lite",
+      "gemini-1.5-flash-8b",
       "gemini-1.5-flash",
-      "gemini-1.5-pro",
-      "gemini-2.5-flash",
-      "gemini-flash-latest",
-      "gemini-pro"
     ]));
+
 
     let lastError: any = null;
     for (const currentModel of candidateModels) {

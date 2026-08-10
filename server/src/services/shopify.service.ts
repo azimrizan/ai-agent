@@ -1,5 +1,15 @@
 import { Product } from "../schemas/product.schema.js";
 
+export interface ShopifyCollectionData {
+
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  url: string;
+  products: Product[];
+}
+
 export class ShopifyService {
   private domain: string;
   private token: string;
@@ -23,7 +33,109 @@ export class ShopifyService {
     return `https://shop.mrplus.in/cart/${numericVariantId}:${quantity}`;
   }
 
+  public async fetchCollections(first: number = 25): Promise<ShopifyCollectionData[]> {
+    if (!this.isConfigured()) return [];
+
+    const graphqlQuery = `
+      query getStorefrontCollections($first: Int) {
+        collections(first: $first) {
+          edges {
+            node {
+              id
+              title
+              handle
+              description
+              products(first: 25) {
+                edges {
+                  node {
+                    id
+                    title
+                    description
+                    productType
+                    vendor
+                    tags
+                    handle
+                    priceRange {
+                      minVariantPrice {
+                        amount
+                        currencyCode
+                      }
+                    }
+                    images(first: 3) {
+                      edges {
+                        node {
+                          url
+                          altText
+                        }
+                      }
+                    }
+                    variants(first: 3) {
+                      edges {
+                        node {
+                          id
+                          title
+                          sku
+                          availableForSale
+                          price {
+                            amount
+                            currencyCode
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch(`https://${this.domain}/api/${this.apiVersion}/graphql.json`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Storefront-Access-Token": this.token,
+        },
+        body: JSON.stringify({
+          query: graphqlQuery,
+          variables: { first },
+        }),
+      });
+
+      if (!response.ok) return [];
+      const json: any = await response.json();
+      const edges = json?.data?.collections?.edges || [];
+
+      return edges.map((edge: any) => {
+        const node = edge.node;
+        const products = (node.products?.edges || []).map((pEdge: any) =>
+          this.mapShopifyNodeToProduct(pEdge.node)
+        );
+        return {
+          id: node.id,
+          title: node.title,
+          handle: node.handle,
+          description: node.description || "",
+          url: `https://shop.mrplus.in/collections/${node.handle}`,
+          products,
+        };
+      });
+    } catch (error: any) {
+      if (error?.cause?.code === "ENOTFOUND" || error?.code === "ENOTFOUND") {
+        console.warn(`⚠️ Shopify DNS resolution hiccup (${this.domain}). Retrying on next request...`);
+      } else {
+        console.error("Error fetching Shopify collections:", error?.message || error);
+      }
+      return [];
+    }
+  }
+
+
   public async fetchProducts(options: { query?: string; first?: number } = {}): Promise<Product[]> {
+
     if (!this.isConfigured()) return [];
 
     const first = options.first || 50;
@@ -101,10 +213,15 @@ export class ShopifyService {
 
       const edges = json?.data?.products?.edges || [];
       return edges.map((edge: any) => this.mapShopifyNodeToProduct(edge.node));
-    } catch (error) {
-      console.error("Error calling Shopify Storefront API:", error);
+    } catch (error: any) {
+      if (error?.cause?.code === "ENOTFOUND" || error?.code === "ENOTFOUND") {
+        console.warn(`⚠️ Shopify DNS resolution hiccup (${this.domain}). Retrying on next request...`);
+      } else {
+        console.error("Error calling Shopify Storefront API:", error?.message || error);
+      }
       return [];
     }
+
   }
 
   public async getProductById(id: string): Promise<Product | null> {

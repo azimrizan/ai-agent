@@ -10,11 +10,12 @@ const __dirname = path.dirname(__filename);
 class ProductRepository {
   private products: Product[] = [];
   private stores: Store[] = [];
+  private shopifyCollections: any[] = [];
   private shopifyProductsLoaded: boolean = false;
 
   constructor() {
     this.loadData();
-    // Proactively load live products from Shopify Storefront API
+    // Proactively load live products and collections from Shopify Storefront API
     this.syncShopifyProducts().catch((err) => {
       console.warn("Initial Shopify products sync warning:", err);
     });
@@ -75,7 +76,26 @@ class ProductRepository {
 
   public async syncShopifyProducts(searchQuery?: string): Promise<Product[]> {
     try {
-      const shopifyProds = await shopifyService.fetchProducts({ query: searchQuery, first: 50 });
+      const [shopifyProds, shopifyCols] = await Promise.all([
+        shopifyService.fetchProducts({ query: searchQuery, first: 50 }),
+        shopifyService.fetchCollections(25),
+      ]);
+
+      if (shopifyCols && shopifyCols.length > 0) {
+        this.shopifyCollections = shopifyCols;
+        console.log(`🏷️  Synced ${shopifyCols.length} collections from Shopify (${shopifyCols.map(c => c.title).join(", ")})`);
+
+        // Merge products from collections as well
+        for (const col of shopifyCols) {
+          if (col.products && col.products.length > 0) {
+            for (const p of col.products) {
+              if (!p.tags.includes(col.title)) p.tags.push(col.title);
+            }
+            this.mergeProducts(col.products);
+          }
+        }
+      }
+
       if (shopifyProds && shopifyProds.length > 0) {
         this.mergeProducts(shopifyProds);
         this.shopifyProductsLoaded = true;
@@ -87,6 +107,90 @@ class ProductRepository {
       return [];
     }
   }
+
+  public getCollections(): any[] {
+    return this.shopifyCollections;
+  }
+
+  public async searchCollectionsAsync(query: string): Promise<{ collection?: any; products: Product[] }> {
+    if (!query) return { products: [] };
+    const rawQ = query.toLowerCase().trim();
+
+    // Standardize terms like theater -> theatre, tv -> led-tv
+    const qNorm = rawQ
+      .replace(/\btheater\b/g, "theatre")
+      .replace(/\btelevisions?\b/g, "tv")
+      .replace(/[^\w\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // 1. Check exact or fuzzy title/handle match against synced shopifyCollections
+    let matchedCol = this.shopifyCollections.find((c) => {
+      const colTitle = c.title.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+      const colHandle = c.handle.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+      const qClean = qNorm.replace(/[^a-z0-9\s]/g, "");
+
+      return (
+        colTitle.includes(qClean) ||
+        colHandle.includes(qClean) ||
+        qClean.includes(colTitle) ||
+        qClean.includes(colHandle)
+      );
+    });
+
+    // 2. Specific intent mappings for common user phrases
+    if (!matchedCol) {
+      if (/hometheater|home theater|soundbar|speaker|audio|theatre/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "home-theatre" || c.title.toLowerCase().includes("home theatre"));
+      } else if (/monsoon.*tv|tv.*monsoon|led tv/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "led-tv");
+      } else if (/cooker|pressure/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "pressure-cooker");
+      } else if (/fry|pan/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "fry-pan");
+      } else if (/fan|bldc/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle.includes("fan"));
+      } else if (/washing|washer/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle.includes("washing"));
+      }
+    }
+
+    // 3. If query mentions "monsoon" or "sale" without specific category:
+    if (!matchedCol && /monsoon|sale|offer|deal/i.test(rawQ)) {
+      const featuredCols = this.shopifyCollections.filter((c) =>
+        ["led-tv", "home-theatre", "pressure-cooker", "ktf-combo", "air-fryer"].includes(c.handle)
+      );
+      const combinedProds: Product[] = [];
+      for (const col of featuredCols) {
+        if (col.products) combinedProds.push(...col.products);
+      }
+
+      // Pick top LED TV collection as primary link if TV was mentioned, or Home Theatre
+      const primaryCol = rawQ.includes("tv")
+        ? this.shopifyCollections.find((c) => c.handle === "led-tv")
+        : this.shopifyCollections.find((c) => c.handle === "home-theatre") || featuredCols[0];
+
+      return {
+        collection: primaryCol || {
+          title: "MR.PLUS Monsoon Special Collection",
+          handle: "led-tv",
+          url: "https://shop.mrplus.in/collections/led-tv",
+          description: "Exclusive Monsoon Deals"
+        },
+        products: combinedProds.slice(0, 8)
+      };
+    }
+
+    if (matchedCol && matchedCol.products && matchedCol.products.length > 0) {
+      return { collection: matchedCol, products: matchedCol.products };
+    }
+
+    // Fallback: search products matching query
+    const prods = await this.searchProductsAsync({ query: rawQ, limit: 12 });
+    return { products: prods };
+  }
+
+
 
   private mergeProducts(newProducts: Product[]) {
     for (const prod of newProducts) {

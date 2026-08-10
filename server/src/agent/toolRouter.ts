@@ -58,8 +58,9 @@ export class ToolRouter {
     // 2. Classify Intent
     const intent = classifyIntent(message, hasImage);
     sessionStore.updateSession(session.sessionId, { lastIntent: intent.type });
+    console.log(`📩 [ToolRouter] Incoming request: "${message}" | Intent: ${intent.type}`);
 
-    // 3. Handle Simple Intents Directly (0 LLM Tokens, <5ms latency)
+    // 3. Simple static intents (0 LLM Tokens, <5ms latency)
     if (intent.type === IntentType.GREETING) {
       const customerName = req.customerProfile?.firstName ? ` ${req.customerProfile.firstName}` : "";
       const text = `### Hello${customerName}! Welcome to MR.PLUS 🌿\n\nI am your AI Shopping Architect for **shop.mrplus.in** (Kerala's premier home electronics & kitchenware experience).\n\nHow can I help you today?\n- 🥘 **Cookware & Pressure Cookers**\n- 🔊 **Soundbars & Bluetooth Speakers**\n- 🍳 **Appachatty & Frypans**\n- 📦 **Shipping, Returns & Warranty**`;
@@ -93,108 +94,11 @@ export class ToolRouter {
       }
     }
 
-    if (intent.type === IntentType.PRODUCT_DETAIL) {
-      analyticsTracker.trackToolCall("get_product_details");
-      const searchRes = productRepository.searchProducts({ query: intent.query, limit: 1 });
-      const matched = searchRes[0];
-
-      if (matched) {
-        const specsText = matched.specifications
-          ? Object.entries(matched.specifications)
-              .filter(([k]) => k !== "variantId" && k !== "handle")
-              .map(([k, v]) => `- **${k.charAt(0).toUpperCase() + k.slice(1)}**: ${v}`)
-              .join("\n")
-          : "- **Warranty**: 1-Year Official MR.PLUS Kerala Warranty";
-
-        const text = `### 🌟 Product Breakdown: ${matched.name}\n\n**Price**: ₹${matched.price.toLocaleString()}\n**Category**: ${matched.category || "Home & Kitchen"}\n**Availability**: ${matched.stockStatus === "in_stock" ? "In Stock (Dispatches in 24 hrs)" : "Out of Stock"}\n\n**Overview**:\n${matched.description || "High-grade MR.PLUS appliance engineered for superior daily durability and thermal efficiency."}\n\n**Key Highlights & Specifications**:\n${specsText}\n\n- 🚚 **Delivery**: 2-3 Days express shipping across all Kerala districts\n- 🛡️ **Support & Warranty**: Full brand warranty with dedicated Kerala customer service`;
-
-        const updatedState = this.updateProjectStateWithProducts(
-          req.projectState,
-          [matched],
-          matched.name
-        );
-
-        return this.buildDirectResponse(text, updatedState, [
-          `Buy ${matched.name} now`,
-          "Show pressure cookers under ₹2000",
-          "Check non-stick frypans",
-        ]);
-      }
-    }
-
-    if (
-      intent.type === IntentType.SIMPLE_SEARCH ||
-      intent.type === IntentType.COLLECTION_BROWSE ||
-      intent.type === IntentType.PRICE_FILTER
-    ) {
-      analyticsTracker.trackToolCall("search_products");
-      const searchTerms = rewriteQuery(intent.query);
-      analyticsTracker.trackSearch(searchTerms[0], 1);
-
-      let foundProducts: any[] = [];
-      for (const term of searchTerms) {
-        const res = await searchProductsTool.execute({
-          query: term,
-          maxPrice: intent.extractedPrice,
-          limit: 15,
-        });
-        if (res.products && res.products.length > 0) {
-          foundProducts.push(...res.products);
-        }
-      }
-
-      // Deduplicate
-      const uniqueMap = new Map();
-      for (const p of foundProducts) {
-        if (!uniqueMap.has(p.id)) uniqueMap.set(p.id, p);
-      }
-      let uniqueProducts = Array.from(uniqueMap.values());
-
-      // Global Fallback: If broad search returned 0 items, pull all catalog products matching price filter
-      if (uniqueProducts.length === 0) {
-        const allProds = await productRepository.searchProductsAsync({ limit: 40 });
-        uniqueProducts = intent.extractedPrice
-          ? allProds.filter((p: any) => p.price <= intent.extractedPrice!)
-          : allProds;
-      }
-
-      // Apply strict domain filter (electronics vs cookware/utensils)
-      uniqueProducts = filterDomainProducts(intent.query, uniqueProducts);
-
-      // Score, Rank, and take Top 8 items max
-      const rankingQuery = searchTerms.join(" ");
-      let ranked = rankProducts(uniqueProducts, rankingQuery, intent.extractedPrice);
-      if (intent.extractedPrice) {
-        ranked = ranked.filter((p) => p.price <= intent.extractedPrice!);
-      }
-      const topProducts = ranked.slice(0, 8);
-
-      if (topProducts.length > 0) {
-        const updatedState = this.updateProjectStateWithProducts(
-          req.projectState,
-          topProducts,
-          intent.query,
-          intent.extractedPrice
-        );
-        const displayTitle = formatCleanTitle(intent.query, intent.extractedPrice);
-        const replyText = `### ${displayTitle}\n\nI found **${topProducts.length}** curated MR.PLUS products matching your request. Interactive cards are loaded on the left panel!\n\n- 🛍️ **Products Found**: ${topProducts.slice(0, 3).map(p => p.name || p.title).join(", ")}${topProducts.length > 3 ? "..." : ""}\n- 💰 **Price Filter**: ${intent.extractedPrice ? `Max ₹${intent.extractedPrice.toLocaleString()}` : "All Prices"}`;
-        return this.buildDirectResponse(replyText, updatedState, [
-          "Compare top items",
-          "Show pressure cookers under ₹2000",
-          "Check non-stick frypans",
-        ]);
-      } else if (intent.extractedPrice) {
-        const replyText = `### Budget Filter Notice\n\nNo MR.PLUS items matched **"${intent.query}"** strictly under **₹${intent.extractedPrice.toLocaleString()}**.\n\nOur kitchenware & appliance items start from **₹699** (Appachatty & Frypans) and **₹1,499** (Pressure Cookers). Try searching for items under ₹2,000 or ₹5,000!`;
-        return this.buildDirectResponse(replyText, req.projectState, [
-          "Show frypans under ₹1000",
-          "Show pressure cookers under ₹2000",
-          "Show all kitchenware",
-        ]);
-      }
-    }
-
-    // 4. Complex Intents -> Delegate to Orchestrator + LLM (Groq Text / Gemini Vision)
-    return await invokeLlmCallback(req, intent);
+    // 4. Pre-fetch relevant products using LlmBridge and delegate to LLM Pipeline (Groq / Gemini)
+    // Pre-fetching gives the LLM immediate real catalog context, reducing iterations & avoiding blank searches
+    const preFetchedProducts = await (await import("./llmBridge.js")).llmBridge.preFetchProducts(message, intent.extractedPrice);
+    
+    return await invokeLlmCallback(req, intent, preFetchedProducts);
   }
 
   private buildDirectResponse(

@@ -93,9 +93,10 @@ if (process.env.VERCEL !== "1") {
     console.log(
       `🤖 AI Engine Mode: ${
         groqService.isAvailable()
-          ? "Groq Llama 3.3 70B (Primary) -> Gemini (Secondary Fallback)"
+          ? "Groq Llama 3.1 8B Instant (Primary) -> Gemini (Secondary Fallback)"
           : "Google Gemini API Mode"
       }`
+
     );
   });
 }

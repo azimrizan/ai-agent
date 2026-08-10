@@ -34,17 +34,21 @@ function normalizeSchema(obj: any): any {
 }
 
 export class GroqService {
-  private groqModels: string[] = [
-    "llama-3.3-70b-versatile",
+  private defaultModels: string[] = [
     "llama-3.1-8b-instant",
-    "llama-3.3-70b-specdec",
-    "deepseek-r1-distill-llama-70b",
-    "qwen-2.5-coder-32b",
-    "llama-3.2-11b-vision-instruct",
-    "llama-3.2-90b-vision-instruct",
-    "llama-3.2-3b-preview",
-    "llama-3.2-1b-preview",
+    "llama-3.3-70b-versatile",
+    "mixtral-8x7b-32768",
+    "gemma2-9b-it",
   ];
+
+  private getModelList(): string[] {
+    const envModel = process.env.GROQ_MODEL?.trim();
+    if (envModel) {
+      return Array.from(new Set([envModel, ...this.defaultModels]));
+    }
+    return this.defaultModels;
+  }
+
 
   private getApiKey(): string {
     return process.env.GROQ_API_KEY || "";
@@ -60,7 +64,8 @@ export class GroqService {
     imageAttachment?: string,
     history: ChatMessage[] = [],
     currentProjectState: ProjectState = DEFAULT_PROJECT_STATE,
-    customerProfile?: any
+    customerProfile?: any,
+    preFetchedProducts?: any[]
   ): Promise<{
     replyText: string;
     updatedProjectState: ProjectState;
@@ -75,7 +80,8 @@ export class GroqService {
     let lastError: Error | null = null;
 
     // Cycle through all Groq models in priority order as fallbacks
-    for (const model of this.groqModels) {
+    for (const model of this.getModelList()) {
+
       try {
         console.log(`🤖 Attempting Groq AI Model: ${model}`);
         const result = await this.tryGroqModel(
@@ -84,7 +90,8 @@ export class GroqService {
           imageAttachment,
           history,
           currentProjectState,
-          customerProfile
+          customerProfile,
+          preFetchedProducts
         );
 
         return { ...result, usedModel: model };
@@ -103,7 +110,8 @@ export class GroqService {
     imageAttachment: string | undefined,
     history: ChatMessage[],
     currentProjectState: ProjectState,
-    customerProfile?: any
+    customerProfile?: any,
+    preFetchedProducts?: any[]
   ): Promise<{
     replyText: string;
     updatedProjectState: ProjectState;
@@ -112,6 +120,28 @@ export class GroqService {
   }> {
     const toolActivities: ToolActivity[] = [];
     let updatedProjectState = JSON.parse(JSON.stringify(currentProjectState)) as ProjectState;
+
+    if (preFetchedProducts && preFetchedProducts.length > 0) {
+      const shoppingListItems = preFetchedProducts.slice(0, 6).map((p: any) => ({
+        productId: p.id,
+        quantity: 1,
+        priority: "essential" as const,
+        reason: `Curated for "${userMessage.slice(0, 30)}"`
+      }));
+
+      const subtotal = preFetchedProducts.reduce((sum: number, p: any) => sum + (p.price || 0), 0);
+      updatedProjectState = {
+        ...updatedProjectState,
+        title: `Curated Recommendations`,
+        status: "planning",
+        budget: {
+          maximum: updatedProjectState.budget?.maximum || null,
+          currentTotal: subtotal,
+          remaining: updatedProjectState.budget?.maximum ? Math.max(0, updatedProjectState.budget.maximum - subtotal) : null
+        },
+        shoppingList: shoppingListItems
+      };
+    }
 
     // Convert tool contracts into OpenAI function declaration format with normalized lowercase schema types
     const openAiTools = allTools.map((tool) => ({
@@ -125,23 +155,45 @@ export class GroqService {
 
     let customerContext = "";
     if (customerProfile && (customerProfile.firstName || customerProfile.email)) {
-      customerContext = ` | Customer Profile: Name: ${customerProfile.firstName || ""} ${customerProfile.lastName || ""}, Email: ${customerProfile.email || ""}, Orders: ${customerProfile.ordersCount || 0}`;
+      customerContext = ` | Customer Profile: Name: ${customerProfile.firstName || ""} ${customerProfile.lastName || ""}, Email: ${customerProfile.email || ""}`;
     }
+
+    let preFetchedText = "";
+    if (preFetchedProducts && preFetchedProducts.length > 0) {
+      const formattedList = preFetchedProducts
+        .map((p: any) => `- ${p.name || p.title} (ID: ${p.id}) | Price: ₹${p.price} | Category: ${p.category || "Cookware"} | Description: ${(p.description || "N/A").slice(0, 100)}`)
+        .join("\n");
+
+      const colMeta = (preFetchedProducts as any).matchedCollection;
+      const colText = colMeta
+        ? `\nMATCHED SHOPIFY COLLECTION: "${colMeta.title}" | EXACT VERIFIED URL: ${colMeta.url}`
+        : "";
+
+      preFetchedText = `\n\nPRE-FETCHED MATCHING CATALOG PRODUCTS FOR THIS USER QUERY:\n${formattedList}${colText}\n\nINSTRUCTION: Synthesize a friendly, expert shopping recommendation based on these products. Products are ALREADY loaded on the UI workspace. If a collection URL is provided above, include a direct link to it in markdown format: [Explore ${colMeta?.title || "Collection"}](${colMeta?.url}).`;
+    }
+
+    const stateSummary = currentProjectState && currentProjectState.title
+      ? `Project Title: "${currentProjectState.title}" | Status: ${currentProjectState.status || "planning"}`
+      : "No active project";
 
     const systemPrompt = `You are MR.PLUS AI Shopping Assistant for shop.mrplus.in (Kerala's premier AI shopping experience).
 
 IMPORTANT CONTEXT:
-Current Project State JSON: ${JSON.stringify(currentProjectState)}${customerContext}
+${stateSummary}${customerContext}${preFetchedText}
 
 STRICT BEHAVIOR INSTRUCTIONS:
 1. GREETINGS & CASUAL INTROS (e.g., "hi", "hello", "hey", "good morning"):
-   - Greet the user warmly and professionally. If customer profile exists, address them by name (e.g. "Hello Azim!").
+   - Greet the user warmly and professionally. Address customer by name if known.
    - Briefly ask how you can assist them today with MR.PLUS kitchenware, pressure cookers, appachatty, frypans, cookware, soundbars, or home appliances.
-   - DO NOT execute search_products or invent random search queries like 'home appliances' when the user simply greets you. Wait for a real product request.
 
-2. SPECIFIC PRODUCT & PROJECT REQUESTS (e.g., "show pressure cookers under ₹2000", "need non-stick frypan"):
-   - Execute search_products tool matching the user's specific request.
-   - Format prices in ₹ (INR).`;
+2. PRODUCT & COLLECTION ADVICE:
+   - Provide clear, helpful, expert advice polished by LLM reasoning.
+   - Format prices clearly in INR (₹).
+   - STRICT URL RULE: ONLY use exact collection URLs explicitly provided in the context above (e.g., https://shop.mrplus.in/collections/home-theatre or https://shop.mrplus.in/collections/led-tv). NEVER invent or guess collection URLs like 'home-theater'!
+
+3. TOOL CALL PARAMETER RULE:
+   - Always pass numeric parameters (e.g. maxPrice, targetPrice, limit, quantity) strictly as raw JSON numbers without quotes, e.g. maxPrice: 2000, NOT '2000'.`;
+
 
     const messages: any[] = [{ role: "system", content: systemPrompt }];
 
@@ -163,27 +215,45 @@ STRICT BEHAVIOR INSTRUCTIONS:
     messages.push({ role: "user", content: userContent });
 
     const isSimpleGreeting = /^(hi|hello|hey|hey\s+there|good\s+morning|good\s+afternoon|good\s+evening|namaste|greetings|hi\s+there|hlo|hola)\s*[\.!\?]*$/i.test(userMessage.trim());
-    const toolsToPass = isSimpleGreeting ? [] : openAiTools;
+    const hasPreFetched = Boolean(preFetchedProducts && preFetchedProducts.length > 0);
+    const toolsToPass = (isSimpleGreeting || hasPreFetched) ? [] : openAiTools;
+
 
     let response = await this.callGroqApi(modelName, messages, toolsToPass);
     let choice = response.choices?.[0];
     let assistantMsg = choice?.message;
 
     let iterations = 0;
-    const maxIterations = 4;
+    const maxIterations = preFetchedProducts && preFetchedProducts.length > 0 ? 1 : 2;
+    const seenToolCalls = new Set<string>();
 
     while (assistantMsg?.tool_calls && assistantMsg.tool_calls.length > 0 && iterations < maxIterations) {
       iterations++;
       messages.push(assistantMsg);
 
+      let shouldBreak = false;
+
       for (const toolCall of assistantMsg.tool_calls) {
         const fnName = toolCall.function.name;
-        let fnArgs = {};
+        let fnArgs: any = {};
         try {
           fnArgs = JSON.parse(toolCall.function.arguments || "{}");
         } catch (e) {
           fnArgs = {};
         }
+
+        // Coerce string numbers in fnArgs if model sent them as strings
+        if (fnArgs.maxPrice !== undefined) fnArgs.maxPrice = Number(String(fnArgs.maxPrice).replace(/[^0-9.]/g, ""));
+        if (fnArgs.limit !== undefined) fnArgs.limit = Number(String(fnArgs.limit).replace(/[^0-9]/g, ""));
+        if (fnArgs.targetPrice !== undefined) fnArgs.targetPrice = Number(String(fnArgs.targetPrice).replace(/[^0-9.]/g, ""));
+
+        const signature = `${fnName}:${JSON.stringify(fnArgs)}`;
+        if (seenToolCalls.has(signature)) {
+          console.warn(`⚠️ Model attempted duplicate tool call ${fnName}, stopping loop.`);
+          shouldBreak = true;
+          break;
+        }
+        seenToolCalls.add(signature);
 
         console.log(`🛠️ Groq calling tool ${fnName} with args:`, fnArgs);
 
@@ -244,7 +314,11 @@ STRICT BEHAVIOR INSTRUCTIONS:
         });
       }
 
-      response = await this.callGroqApi(modelName, messages, openAiTools);
+      if (shouldBreak) break;
+
+      // On second pass, don't pass tools to force plain text output
+      response = await this.callGroqApi(modelName, messages, iterations >= 1 ? [] : openAiTools);
+
       choice = response.choices?.[0];
       assistantMsg = choice?.message;
     }
@@ -269,7 +343,7 @@ STRICT BEHAVIOR INSTRUCTIONS:
       model,
       messages,
       temperature: 0.6,
-      max_tokens: 1500,
+      max_tokens: 2500,
     };
 
     if (tools && tools.length > 0) {

@@ -17,13 +17,24 @@ function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+const STOP_WORDS = new Set([
+  "show", "me", "find", "get", "buy", "under", "below", "less", "than", "for",
+  "with", "the", "a", "an", "of", "in", "to", "and", "or", "i", "want", "need",
+  "please", "list", "items", "some", "any", "which", "what", "are", "is", "can", "you",
+  "other", "only", "one", "combo", "workspace", "here", "give", "also", "bring"
+]);
+
 export function rankProducts(
   products: Product[],
   query: string = "",
   maxBudget?: number
 ): Product[] {
+  if (!products || products.length === 0) return [];
   const queryLower = query.toLowerCase().trim();
-  const queryTerms = queryLower.split(/\s+/).filter((t) => t.length > 2);
+  const queryTerms = queryLower
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((t) => t.length >= 2 && !STOP_WORDS.has(t));
 
   const scored: RankedProductScore[] = products.map((product) => {
     const titleLower = (product.name || product.title || "").toLowerCase();
@@ -35,13 +46,14 @@ export function rankProducts(
     let keywordHits = 0;
     const fullTextNoSpaces = `${titleLower}${descLower}${catLower}`.replace(/\s+/g, "");
     const rawQueryNoSpaces = queryLower.replace(/\s+/g, "");
-    const isDirectMatch = rawQueryNoSpaces.length > 2 && fullTextNoSpaces.includes(rawQueryNoSpaces);
+    const isDirectMatch = rawQueryNoSpaces.length >= 2 && fullTextNoSpaces.includes(rawQueryNoSpaces);
 
     for (const term of queryTerms) {
       const escaped = escapeRegex(term);
       const reg = new RegExp(`\\b${escaped}\\b`, "i");
       if (reg.test(titleLower)) keywordHits += 2;
       if (reg.test(descLower)) keywordHits += 1;
+      if (reg.test(catLower)) keywordHits += 1;
     }
     if (isDirectMatch) keywordHits += 3;
 
@@ -69,17 +81,13 @@ export function rankProducts(
     // 6. Recently added bonus (0.5 to 1.0)
     const recentlyAdded = product.inStock ? 0.8 : 0.5;
 
-    let score = 0;
-    if (queryTerms.length > 0 && keywordHits === 0 && collectionRelevance === 0 && tagMatch === 0) {
-      score = 0;
-    } else {
-      score =
-        exactKeywordMatch * 0.45 +
-        collectionRelevance * 0.2 +
-        tagMatch * 0.15 +
-        priceWithinBudget * 0.05 +
-        recentlyAdded * 0.05;
-    }
+    let score =
+      exactKeywordMatch * 0.45 +
+      collectionRelevance * 0.2 +
+      tagMatch * 0.15 +
+      priceWithinBudget * 0.1 +
+      recentlyAdded * 0.1;
+
     return {
       product,
       score: Number(score.toFixed(3)),
@@ -95,7 +103,7 @@ export function rankProducts(
   });
 
   return scored
-    .filter((s) => s.score > 0)
     .sort((a, b) => b.score - a.score)
     .map((s) => s.product);
 }
+

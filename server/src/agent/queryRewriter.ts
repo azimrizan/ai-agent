@@ -5,29 +5,29 @@ const QUERY_REWRITES: Record<string, string[]> = {
   "gadget": ["tv", "soundbar", "speaker", "air fryer"],
   "gadgets": ["tv", "soundbar", "speaker", "air fryer"],
   "appliance": ["air fryer", "kettle", "rice cooker"],
-  "appliances": ["air fryer", "kettle", "rice cooker"],
-  "kitchen appliances": ["air fryer", "kettle", "rice cooker"],
+  "appliances": ["air fryer", "kettle", "rice cooker", "tv"],
+  "kitchen appliances": ["air fryer", "kettle", "rice cooker", "pressure cooker"],
   "home appliances": ["air fryer", "kettle", "rice cooker", "tv", "soundbar"],
   "household": ["cookware", "frypan", "appachatty", "pressure cooker", "air fryer", "kettle"],
   "cookware": ["cookware", "frypan", "appachatty", "pressure cooker", "tawa", "kadai"],
   "kitchenware": ["cookware", "frypan", "appachatty", "pressure cooker", "tawa", "kadai"],
   "kitchen": ["cookware", "frypan", "appachatty", "pressure cooker", "tawa", "kadai", "air fryer"],
+  "pan": ["frypan", "non-stick frypan", "tawa", "appachatty", "kadai"],
+  "pans": ["frypan", "non-stick frypan", "tawa", "appachatty", "kadai"],
   "dosa": ["dosa pan", "tawa", "non-stick tawa", "appachatty"],
   "appam": ["appachatty", "non-stick appachatty", "cookware"],
   "rice": ["rice cooker", "pressure cooker", "5L pressure cooker"],
   "biryani": ["pressure cooker", "5L pressure cooker", "cookware"],
   "tv": ["tv", "led tv", "smart tv", "television"],
   "television": ["tv", "led tv", "smart tv", "television"],
-  "speakers": ["soundbar", "bluetooth speaker", "2.1 soundbar", "home theatre"],
-  "soundbar": ["soundbar", "2.1 soundbar", "5.1 soundbar", "soundbar speaker"],
-  "music": ["soundbar", "bluetooth speaker"],
-  "sound": ["soundbar", "bluetooth speaker"],
-  "frying": ["frypan", "non-stick frypan", "tawa"],
-  "items": ["cookware", "pressure cooker", "frypan", "soundbar", "tv", "air fryer"],
-  "products": ["cookware", "pressure cooker", "frypan", "soundbar", "tv", "air fryer"],
-  "anything": ["cookware", "pressure cooker", "frypan", "soundbar", "tv", "air fryer"],
-  "best": ["cookware", "pressure cooker", "frypan", "soundbar", "tv", "air fryer"],
+  "hometheater": ["soundbar", "home theatre", "5.1 soundbar", "bluetooth speaker"],
+  "home theater": ["soundbar", "home theatre", "5.1 soundbar", "bluetooth speaker"],
+  "theatre": ["soundbar", "home theatre", "5.1 soundbar"],
+  "monsoon sale": ["led tv", "home theatre", "pressure cooker", "ktf combo", "air fryer"],
+  "monsoon sale tv": ["led tv", "tv", "smart tv"],
+  "breakfast": ["frypan", "tawa", "appachatty", "kettle"],
 };
+
 
 export function rewriteQuery(rawQuery: string): string[] {
   const queryLower = rawQuery.toLowerCase().trim();
@@ -41,6 +41,49 @@ export function rewriteQuery(rawQuery: string): string[] {
 
   return Array.from(new Set(expanded));
 }
+
+export interface ResolvedSearchSpec {
+  query: string;
+  category?: string;
+  maxPrice?: number;
+}
+
+export function resolveProductIntent(rawMessage: string, extractedPrice?: number): ResolvedSearchSpec[] {
+  let textClean = rawMessage
+    .toLowerCase()
+    .replace(/(?:get|show|find|list|only|one|some|here|bring|workspace|in workspace|for me|combo)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!textClean) textClean = rawMessage.toLowerCase().trim();
+
+  const specs: ResolvedSearchSpec[] = [];
+  const splitMatch = textClean.split(/\+|\band\b|&|\bwith\b|\balso\b/i);
+
+  if (splitMatch.length > 1) {
+    for (const part of splitMatch) {
+      const trimmed = part.trim();
+      if (trimmed.length > 1) {
+        const rewrites = rewriteQuery(trimmed);
+        specs.push({
+          query: rewrites[1] || rewrites[0] || trimmed,
+          maxPrice: extractedPrice
+        });
+      }
+    }
+  }
+
+  if (specs.length === 0) {
+    const rewrites = rewriteQuery(textClean);
+    specs.push({
+      query: rewrites[1] || rewrites[0] || textClean,
+      maxPrice: extractedPrice
+    });
+  }
+
+  return specs;
+}
+
 
 export function filterDomainProducts(query: string, products: any[]): any[] {
   const q = query.toLowerCase();
@@ -71,3 +114,4 @@ export function filterDomainProducts(query: string, products: any[]): any[] {
 
   return products;
 }
+

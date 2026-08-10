@@ -13,8 +13,23 @@ export const searchProductsTool = {
       limit: { type: "NUMBER", description: "Max number of products to return (default 10)" }
     }
   },
-  execute: async (args: { query?: string; category?: string; maxPrice?: number; tags?: string[]; limit?: number }) => {
-    const products = await productRepository.searchProductsAsync(args);
+  execute: async (args: { query?: string; category?: string; maxPrice?: number | string; tags?: string[]; limit?: number | string }) => {
+    const maxPriceNum = args.maxPrice !== undefined && args.maxPrice !== null && args.maxPrice !== ""
+      ? Number(String(args.maxPrice).replace(/[^0-9.]/g, ""))
+      : undefined;
+
+    const limitNum = args.limit !== undefined && args.limit !== null && args.limit !== ""
+      ? Number(String(args.limit).replace(/[^0-9]/g, ""))
+      : undefined;
+
+    const products = await productRepository.searchProductsAsync({
+      query: args.query,
+      category: args.category,
+      maxPrice: isNaN(maxPriceNum as number) ? undefined : maxPriceNum,
+      tags: args.tags,
+      limit: isNaN(limitNum as number) ? undefined : limitNum
+    });
     return { products };
   }
 };
+

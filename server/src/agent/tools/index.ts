@@ -1,4 +1,5 @@
 import { searchProductsTool } from "./searchProducts.js";
+import { multiSearchProductsTool } from "./multiSearchProducts.js";
 import { getProductDetailsTool } from "./getProductDetails.js";
 import { findAlternativesTool } from "./findAlternatives.js";
 import { calculateBasketTool } from "./calculateBasket.js";
@@ -15,6 +16,7 @@ import { compareProductsTool } from "./compareProducts.js";
 
 export const allTools = [
   searchProductsTool,
+  multiSearchProductsTool,
   getProductDetailsTool,
   findAlternativesTool,
   calculateBasketTool,
@@ -32,6 +34,7 @@ export const allTools = [
 
 export const toolRegistry: Record<string, any> = {
   [searchProductsTool.name]: searchProductsTool,
+  [multiSearchProductsTool.name]: multiSearchProductsTool,
   [getProductDetailsTool.name]: getProductDetailsTool,
   [findAlternativesTool.name]: findAlternativesTool,
   [calculateBasketTool.name]: calculateBasketTool,
@@ -46,3 +49,4 @@ export const toolRegistry: Record<string, any> = {
   [getVariantsTool.name]: getVariantsTool,
   [compareProductsTool.name]: compareProductsTool,
 };
+

@@ -36,12 +36,13 @@
   "imageUploads": 0,
   "budgetPlans": 0,
   "llmCalls": {
-    "groq": 26,
-    "gemini": 21
+    "groq": 65,
+    "gemini": 23
   },
   "toolCalls": {
     "search_products": 66,
-    "get_product_details": 1
+    "get_product_details": 1,
+    "query_store_policy": 1
   },
   "conversationsCompleted": 0
 }

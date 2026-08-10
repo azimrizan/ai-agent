@@ -84,6 +84,11 @@ export function classifyIntent(userMessage: string, hasImage: boolean = false): 
     return { type: IntentType.COMPARE, query: textLower, isComplex: true };
   }
 
+  // 3.2. CONVERSATIONAL CLARIFICATION / FOLLOW-UP (e.g. "which one would you prefer", "which is better", "why")
+  if (/which\s+(?:one|is|would|do)\b|prefer|better|choice|opinion|why\s+did\s+you|how\s+do\s+i\s+use|explain\s+why|recommend\s+one/i.test(textLower)) {
+    return { type: IntentType.CLARIFICATION, query: textLower, isComplex: false };
+  }
+
   // 3.5. PRODUCT DETAIL / EXPLANATION
   if (/tell\s+me\s+more\s+about|explain|tell\s+me\s+about|details\s+of|features\s+of|specs\s+of/i.test(textLower)) {
     const targetProductQuery = textLower
@@ -95,6 +100,7 @@ export function classifyIntent(userMessage: string, hasImage: boolean = false): 
       isComplex: false,
     };
   }
+
 
   const { cleanQuery, extractedPrice } = parsePriceAndCleanQuery(textLower);
 
