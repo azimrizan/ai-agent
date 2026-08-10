@@ -21,7 +21,8 @@ export function buildCompressedContext(
   // Compress product listings (top 6 max, 40-word max description each)
   let productsContext = "";
   if (products.length > 0) {
-    const compactList = products.slice(0, 6).map((p) => {
+    const compactList = products.slice(0, 12).map((p) => {
+
       const shortDesc = (p.description || "").slice(0, 150).replace(/\n/g, " ");
       return `- [ID: ${p.id}] ${p.title} | Price: ₹${p.price} | Stock: ${p.inStock ? "In Stock" : "Out of Stock"} | ${shortDesc}`;
     });

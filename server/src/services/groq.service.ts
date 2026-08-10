@@ -122,14 +122,15 @@ export class GroqService {
     let updatedProjectState = JSON.parse(JSON.stringify(currentProjectState)) as ProjectState;
 
     if (preFetchedProducts && preFetchedProducts.length > 0) {
-      const shoppingListItems = preFetchedProducts.slice(0, 6).map((p: any) => ({
+      const itemsToUse = preFetchedProducts.slice(0, 12);
+      const shoppingListItems = itemsToUse.map((p: any) => ({
         productId: p.id,
         quantity: 1,
         priority: "essential" as const,
         reason: `Curated for "${userMessage.slice(0, 30)}"`
       }));
 
-      const subtotal = preFetchedProducts.reduce((sum: number, p: any) => sum + (p.price || 0), 0);
+      const subtotal = itemsToUse.reduce((sum: number, p: any) => sum + (p.price || 0), 0);
       updatedProjectState = {
         ...updatedProjectState,
         title: `Curated Recommendations`,
@@ -142,6 +143,7 @@ export class GroqService {
         shoppingList: shoppingListItems
       };
     }
+
 
     // Convert tool contracts into OpenAI function declaration format with normalized lowercase schema types
     const openAiTools = allTools.map((tool) => ({
@@ -276,7 +278,8 @@ STRICT BEHAVIOR INSTRUCTIONS:
             } else {
               toolOutput = await targetTool.execute(fnArgs as any);
               if (fnName === "search_products" && toolOutput?.products && Array.isArray(toolOutput.products) && toolOutput.products.length > 0) {
-                const newItems = toolOutput.products.slice(0, 6).map((p: any) => ({
+                const newItems = toolOutput.products.slice(0, 12).map((p: any) => ({
+
                   productId: p.id,
                   quantity: 1,
                   reason: `Recommended by MR.PLUS AI`,

@@ -54,7 +54,8 @@ export class LlmBridge {
         ranked = ranked.filter((p) => p.price <= extractedPrice);
       }
 
-      const topResult: any = ranked.slice(0, 8);
+      const topResult: any = ranked.slice(0, 12);
+
       if (colResult.collection) {
         topResult.matchedCollection = {
           title: colResult.collection.title,

@@ -166,7 +166,8 @@ export class GeminiService {
                 } else {
                   result = await tool.execute(toolArgs);
                   if (toolName === "search_products" && result?.products && Array.isArray(result.products) && result.products.length > 0) {
-                    const newItems = result.products.slice(0, 6).map((p: any) => ({
+                    const newItems = result.products.slice(0, 12).map((p: any) => ({
+
                       productId: p.id,
                       quantity: 1,
                       reason: `Recommended by MR.PLUS AI`,
