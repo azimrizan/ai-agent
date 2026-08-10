@@ -3,8 +3,31 @@ import { useAgentStore } from "../store/useAgentStore.js";
 import { ArrowUp, Image as ImageIcon, Sparkles, Mic, X } from "lucide-react";
 
 const renderFormattedText = (text: string) => {
-  const parts = text.split(/(\*\*.*?\*\*)/g);
+  const regex = /(\[.*?\]\(https?:\/\/[^\s\)]+\)|\*\*.*?\*\*|https?:\/\/[^\s\)]+)/g;
+  const parts = text.split(regex);
+
   return parts.map((part, i) => {
+    if (!part) return null;
+
+    // Markdown link: [Anchor Text](https://...)
+    const mdLinkMatch = part.match(/^\[(.*?)\]\((https?:\/\/[^\s\)]+)\)$/);
+    if (mdLinkMatch) {
+      const anchorText = mdLinkMatch[1];
+      const url = mdLinkMatch[2];
+      return (
+        <a
+          key={i}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-4 transition-colors"
+        >
+          {anchorText} ↗
+        </a>
+      );
+    }
+
+    // Bold text: **text**
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
         <strong key={i} className="font-semibold text-white">
@@ -12,6 +35,22 @@ const renderFormattedText = (text: string) => {
         </strong>
       );
     }
+
+    // Raw URL: https://...
+    if (/^https?:\/\/[^\s\)]+$/.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-4 transition-colors break-all"
+        >
+          {part} ↗
+        </a>
+      );
+    }
+
     return part;
   });
 };
@@ -119,15 +158,18 @@ export const ChatPanel: React.FC = () => {
       .replace(/^> ⚠️.*?\n\n---\n\n/gs, "")
       .replace(/### Live Shopify Products.*?\n\n/gi, "")
       .replace(/\*gid:\/\/shopify\/.*?\*/gi, "")
+      .replace(/\[([^\]]+)\]\s*\n\s*\((https?:\/\/[^\s\)]+)\)/g, "[$1]($2)")
       .trim();
   };
+
 
   const quickPrompts = [
     { title: "Show pressure cookers under ₹2,000", query: "Show me pressure cookers under ₹2,000" },
     { title: "Find non-stick frypans and appachatty", query: "Find non-stick frypans and appachatty" },
-    { title: "Set up a small balcony garden", query: "I want to set up a small balcony garden under ₹8,000" },
+    { title: "Home Theatre & Soundbars", query: "Show me Home Theatre and Soundbar speakers" },
     { title: "Digital Air Fryer 5L", query: "Tell me about the MR.PLUS Digital Air Fryer 5L" },
   ];
+
 
   return (
     <div className="flex flex-col h-full relative overflow-hidden bg-[#0E0E0E] text-white">

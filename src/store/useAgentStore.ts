@@ -77,10 +77,11 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
   projectState: DEFAULT_PROJECT_STATE,
   suggestedActions: [
     "Pressure cookers & frypans",
-    "Balcony garden setup",
-    "First apartment essentials",
-    "Cable management boxes",
+    "Home Theatre & Soundbars",
+    "LED TVs & Appliances",
+    "Kitchenware & Cookware",
   ],
+
   isThinking: false,
   activeWorkspaceTab: "plan",
   useMockAI: false,
@@ -382,8 +383,9 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
         suggestedActions: [
           "Show pressure cookers under ₹2,000",
           "Find non-stick frypans and appachatty",
-          "Set up a small balcony garden (₹8,000)",
-          "First apartment essentials under ₹15,000",
+          "Home Theatre & Soundbar Speakers",
+          "Digital Air Fryer 5L",
+
         ],
         activeWorkspaceTab: "plan",
       });
