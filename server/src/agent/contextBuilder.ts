@@ -35,7 +35,7 @@ export function buildCompressedContext(
   }
 
   return `System Context:
-You are MR.PLUS AI Shopping Assistant for shop.mrplus.in (Kerala's premier AI shopping experience).
+You are MR.PLUS AI Shopping Assistant for shop.mrplus.in (India's premier AI shopping experience).
 ${customerContext}
 ${sessionContext}
 

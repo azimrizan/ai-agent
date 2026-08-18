@@ -55,35 +55,167 @@ const renderFormattedText = (text: string) => {
   });
 };
 
+interface TableData {
+  headers: string[];
+  rows: string[][];
+}
+
+type ParsedBlock =
+  | { type: "header"; text: string }
+  | { type: "list"; items: string[] }
+  | { type: "table"; data: TableData }
+  | { type: "paragraph"; lines: string[] };
+
+const parseMarkdownContent = (content: string): ParsedBlock[] => {
+  const lines = content.split("\n");
+  const blocks: ParsedBlock[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      i++;
+      continue;
+    }
+
+    // 1. Markdown Table Detection
+    if (
+      trimmed.includes("|") &&
+      i + 1 < lines.length &&
+      lines[i + 1].trim().includes("|") &&
+      /^\|?\s*:?-+:?\s*(\|?\s*:?-+:?\s*)+\|?$/.test(lines[i + 1].trim())
+    ) {
+      const parseCells = (rowStr: string) => {
+        let raw = rowStr.trim();
+        if (raw.startsWith("|")) raw = raw.slice(1);
+        if (raw.endsWith("|")) raw = raw.slice(0, -1);
+        return raw.split("|").map((cell) => cell.trim());
+      };
+
+      const headers = parseCells(trimmed);
+      i += 2; // Skip header and separator line
+
+      const rows: string[][] = [];
+      while (i < lines.length && lines[i].trim().includes("|")) {
+        const rowTrimmed = lines[i].trim();
+        if (/^\|?\s*:?-+:?\s*(\|?\s*:?-+:?\s*)+\|?$/.test(rowTrimmed)) {
+          i++;
+          continue;
+        }
+        const cells = parseCells(rowTrimmed);
+        if (cells.length > 0) {
+          rows.push(cells);
+        }
+        i++;
+      }
+
+      blocks.push({
+        type: "table",
+        data: { headers, rows },
+      });
+      continue;
+    }
+
+    // 2. Headers (#, ##, ###)
+    if (trimmed.startsWith("#")) {
+      blocks.push({
+        type: "header",
+        text: trimmed.replace(/^#+\s*/, ""),
+      });
+      i++;
+      continue;
+    }
+
+    // 3. Lists (*, -, 1.)
+    if (/^([*•\-]||\d+\.)\s+/.test(trimmed)) {
+      const listItems: string[] = [];
+      while (i < lines.length && /^([*•\-]||\d+\.)\s+/.test(lines[i].trim())) {
+        listItems.push(lines[i].trim());
+        i++;
+      }
+      blocks.push({ type: "list", items: listItems });
+      continue;
+    }
+
+    // 4. Regular Paragraphs
+    const paraLines: string[] = [];
+    while (
+      i < lines.length &&
+      lines[i].trim() &&
+      !lines[i].trim().startsWith("#") &&
+      !/^([*•\-]||\d+\.)\s+/.test(lines[i].trim()) &&
+      !(
+        lines[i].trim().includes("|") &&
+        i + 1 < lines.length &&
+        /^\|?\s*:?-+:?\s*(\|?\s*:?-+:?\s*)+\|?$/.test(lines[i + 1].trim())
+      )
+    ) {
+      paraLines.push(lines[i].trim());
+      i++;
+    }
+
+    if (paraLines.length > 0) {
+      blocks.push({ type: "paragraph", lines: paraLines });
+    }
+  }
+
+  return blocks;
+};
+
 const FormattedMessage: React.FC<{ content: string; isUser: boolean }> = ({ content, isUser }) => {
   if (isUser) {
     return <span>{content}</span>;
   }
 
-  const blocks = content.split(/\n\s*\n/);
+  const blocks = parseMarkdownContent(content);
 
   return (
-    <div className="space-y-2.5 text-xs sm:text-sm leading-relaxed text-white/90">
+    <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-white/90">
       {blocks.map((block, bIdx) => {
-        const trimmed = block.trim();
-        if (!trimmed) return null;
-
-        if (trimmed.startsWith("###") || trimmed.startsWith("##") || trimmed.startsWith("#")) {
-          const headerText = trimmed.replace(/^#+\s*/, "");
+        if (block.type === "header") {
           return (
-            <div key={bIdx} className="font-bold text-white text-sm tracking-tight border-b border-white/10 pb-1 mt-1">
-              {renderFormattedText(headerText)}
+            <div key={bIdx} className="font-bold text-white text-sm tracking-tight border-b border-white/10 pb-1 mt-2">
+              {renderFormattedText(block.text)}
             </div>
           );
         }
 
-        const lines = trimmed.split("\n").map((l) => l.trim()).filter(Boolean);
-        const isList = lines.every((line) => /^([*•\-]||\d+\.)\s+/.test(line));
-
-        if (isList) {
+        if (block.type === "table") {
+          const { headers, rows } = block.data;
           return (
-            <div key={bIdx} className="space-y-1.5 pl-0.5 my-1">
-              {lines.map((line, lIdx) => {
+            <div key={bIdx} className="overflow-x-auto my-3 rounded-xl border border-white/15 bg-[#1C1C1E] p-1.5 shadow-xl">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-white/20 bg-white/10 text-white font-semibold">
+                    {headers.map((h, hIdx) => (
+                      <th key={hIdx} className="py-2.5 px-3.5 text-white font-semibold whitespace-nowrap">
+                        {renderFormattedText(h)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                  {rows.map((row, rIdx) => (
+                    <tr key={rIdx} className="hover:bg-white/5 transition-colors">
+                      {row.map((cell, cIdx) => (
+                        <td key={cIdx} className="py-2.5 px-3.5 text-white/90 align-top">
+                          {renderFormattedText(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+
+        if (block.type === "list") {
+          return (
+            <div key={bIdx} className="space-y-1.5 pl-0.5 my-1.5">
+              {block.items.map((line, lIdx) => {
                 const isNumbered = /^\d+\.\s+/.test(line);
                 const numberMatch = line.match(/^(\d+)\.\s+/);
                 const cleanLine = line.replace(/^([*•\-]||\d+\.)\s+/, "");
@@ -104,7 +236,7 @@ const FormattedMessage: React.FC<{ content: string; isUser: boolean }> = ({ cont
 
         return (
           <div key={bIdx} className="space-y-1">
-            {lines.map((line, lIdx) => (
+            {block.lines.map((line, lIdx) => (
               <p key={lIdx}>{renderFormattedText(line)}</p>
             ))}
           </div>
