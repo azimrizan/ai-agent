@@ -35,10 +35,7 @@ function normalizeSchema(obj: any): any {
 
 export class GroqService {
   private defaultModels: string[] = [
-    "gpt-oss-20b",
-    "llama-3.3-70b-versatile",
-    "mixtral-8x7b-32768",
-    "gemma2-9b-it",
+    "openai/gpt-oss-20b"
   ];
 
   private getModelList(): string[] {
@@ -96,7 +93,7 @@ export class GroqService {
 
         return { ...result, usedModel: model };
       } catch (error: any) {
-        console.warn(`⚠️ Groq Model ${model} returned error/quota limit (${error?.message || error}), failing over to next Groq model...`);
+        console.warn(`⚠️ Groq Model ${model} returned error (${error?.message || error}), failing over to next Groq model...`);
         lastError = error;
       }
     }
@@ -319,8 +316,8 @@ STRICT BEHAVIOR INSTRUCTIONS:
 
       if (shouldBreak) break;
 
-      // On second pass, don't pass tools to force plain text output
-      response = await this.callGroqApi(modelName, messages, iterations >= 1 ? [] : openAiTools);
+      // On second pass, pass tools with tool_choice: "none" to force plain text output while keeping tool history schema valid
+      response = await this.callGroqApi(modelName, messages, openAiTools, iterations >= 1 ? "none" : "auto");
 
       choice = response.choices?.[0];
       assistantMsg = choice?.message;
@@ -341,7 +338,7 @@ STRICT BEHAVIOR INSTRUCTIONS:
     };
   }
 
-  private async callGroqApi(model: string, messages: any[], tools: any[]): Promise<any> {
+  private async callGroqApi(model: string, messages: any[], tools: any[], toolChoice: string = "auto"): Promise<any> {
     const body: any = {
       model,
       messages,
@@ -351,7 +348,7 @@ STRICT BEHAVIOR INSTRUCTIONS:
 
     if (tools && tools.length > 0) {
       body.tools = tools;
-      body.tool_choice = "auto";
+      body.tool_choice = toolChoice;
     }
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {

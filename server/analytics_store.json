@@ -36,8 +36,8 @@
   "imageUploads": 0,
   "budgetPlans": 0,
   "llmCalls": {
-    "groq": 65,
-    "gemini": 23
+    "groq": 71,
+    "gemini": 26
   },
   "toolCalls": {
     "search_products": 66,
