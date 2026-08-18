@@ -35,7 +35,7 @@ function normalizeSchema(obj: any): any {
 
 export class GroqService {
   private defaultModels: string[] = [
-    "llama-3.1-8b-instant",
+    "gpt-oss-20b",
     "llama-3.3-70b-versatile",
     "mixtral-8x7b-32768",
     "gemma2-9b-it",
