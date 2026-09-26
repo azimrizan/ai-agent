@@ -33,7 +33,7 @@ export class ShopifyService {
     return `https://shop.mrplus.in/cart/${numericVariantId}:${quantity}`;
   }
 
-  public async fetchCollections(first: number = 25): Promise<ShopifyCollectionData[]> {
+  public async fetchCollections(first: number = 50): Promise<ShopifyCollectionData[]> {
     if (!this.isConfigured()) return [];
 
     const graphqlQuery = `
@@ -45,7 +45,7 @@ export class ShopifyService {
               title
               handle
               description
-              products(first: 25) {
+              products(first: 100) {
                 edges {
                   node {
                     id
@@ -138,7 +138,7 @@ export class ShopifyService {
 
     if (!this.isConfigured()) return [];
 
-    const first = options.first || 50;
+    const first = options.first || 250;
     const q = options.query ? options.query.trim() : null;
 
     const graphqlQuery = `

@@ -26,17 +26,26 @@ class ProductRepository {
   }
 
   public handleWebhookUpdate(updatedProd: Product) {
-    const idx = this.products.findIndex((p) => p.id === updatedProd.id);
+    const cleanId = String(updatedProd.id).replace(/[^0-9]/g, "");
+    const idx = this.products.findIndex((p) => {
+      const pClean = String(p.id).replace(/[^0-9]/g, "");
+      return p.id === updatedProd.id || (cleanId && pClean === cleanId) || p.sku === updatedProd.sku;
+    });
     if (idx >= 0) {
-      this.products[idx] = updatedProd;
+      this.products[idx] = { ...this.products[idx], ...updatedProd };
     } else {
       this.products.unshift(updatedProd);
     }
-    console.log(`🛍️ Webhook updated product in memory: ${updatedProd.title}`);
+    console.log(`🛍️ Webhook updated product in memory: ${updatedProd.name || updatedProd.title}`);
   }
 
   public handleWebhookDelete(productId: string) {
-    this.products = this.products.filter((p) => p.id !== productId);
+    const cleanId = String(productId).replace(/[^0-9]/g, "");
+    this.products = this.products.filter((p) => {
+      const pClean = String(p.id).replace(/[^0-9]/g, "");
+      if (cleanId && pClean === cleanId) return false;
+      return p.id !== productId;
+    });
     console.log(`🛍️ Webhook removed product from memory: ${productId}`);
   }
 
@@ -56,8 +65,8 @@ class ProductRepository {
       for (const pPath of possibleProductPaths) {
         if (fs.existsSync(pPath)) {
           const rawProducts = fs.readFileSync(pPath, "utf-8");
-          const localProds = JSON.parse(rawProducts);
-          this.mergeProducts(localProds);
+          const localProds: Product[] = JSON.parse(rawProducts);
+          this.products = localProds;
           break;
         }
       }
@@ -70,41 +79,85 @@ class ProductRepository {
         }
       }
     } catch (error) {
-      console.error("Error loading mock data in ProductRepository:", error);
+      console.error("Error loading initial data in ProductRepository:", error);
     }
   }
 
   public async syncShopifyProducts(searchQuery?: string): Promise<Product[]> {
     try {
+      if (searchQuery && searchQuery.trim()) {
+        const liveProds = await shopifyService.fetchProducts({ query: searchQuery, first: 50 });
+        if (liveProds && liveProds.length > 0) {
+          for (const p of liveProds) {
+            const idx = this.products.findIndex(
+              (existing) => existing.id === p.id || existing.sku === p.sku
+            );
+            if (idx >= 0) {
+              this.products[idx] = p;
+            } else {
+              this.products.unshift(p);
+            }
+          }
+        }
+        return liveProds;
+      }
+
+      // Full catalog sync: Fetch live active products & collections from Shopify Storefront API
       const [shopifyProds, shopifyCols] = await Promise.all([
-        shopifyService.fetchProducts({ query: searchQuery, first: 50 }),
-        shopifyService.fetchCollections(25),
+        shopifyService.fetchProducts({ first: 250 }),
+        shopifyService.fetchCollections(50),
       ]);
 
       if (shopifyCols && shopifyCols.length > 0) {
         this.shopifyCollections = shopifyCols;
-        console.log(`🏷️  Synced ${shopifyCols.length} collections from Shopify (${shopifyCols.map(c => c.title).join(", ")})`);
-
-        // Merge products from collections as well
-        for (const col of shopifyCols) {
-          if (col.products && col.products.length > 0) {
-            for (const p of col.products) {
-              if (!p.tags.includes(col.title)) p.tags.push(col.title);
-            }
-            this.mergeProducts(col.products);
-          }
-        }
+        console.log(`🏷️ Synced ${shopifyCols.length} collections from Shopify (${shopifyCols.map(c => c.title).join(", ")})`);
       }
 
       if (shopifyProds && shopifyProds.length > 0) {
-        this.mergeProducts(shopifyProds);
+        const activeMap = new Map<string, Product>();
+        for (const p of shopifyProds) {
+          activeMap.set(p.id, p);
+        }
+
+        // Tag products with their collection names
+        if (shopifyCols && shopifyCols.length > 0) {
+          for (const col of shopifyCols) {
+            if (col.products && col.products.length > 0) {
+              for (const cp of col.products) {
+                if (activeMap.has(cp.id)) {
+                  const existing = activeMap.get(cp.id)!;
+                  if (!existing.tags.includes(col.title)) {
+                    existing.tags.push(col.title);
+                  }
+                } else {
+                  activeMap.set(cp.id, cp);
+                }
+              }
+            }
+          }
+        }
+
+        // Active catalog replacement: only active products remain in memory
+        this.products = Array.from(activeMap.values());
         this.shopifyProductsLoaded = true;
-        console.log(`🛍️  Synced ${shopifyProds.length} products from Shopify Storefront API (${shopifyService.getStoreDomain()})`);
+        console.log(`🛍️ Synced and refreshed active catalog (${this.products.length} active products) from Shopify (${shopifyService.getStoreDomain()})`);
+        this.saveActiveCatalogToDisk();
       }
       return shopifyProds;
     } catch (error) {
       console.error("Error syncing Shopify products:", error);
       return [];
+    }
+  }
+
+  private saveActiveCatalogToDisk() {
+    try {
+      const serverJsonPath = path.join(__dirname, "../data/products.json");
+      if (fs.existsSync(path.dirname(serverJsonPath))) {
+        fs.writeFileSync(serverJsonPath, JSON.stringify(this.products, null, 2), "utf-8");
+      }
+    } catch (err) {
+      console.warn("Could not persist active products to disk cache:", err);
     }
   }
 
@@ -141,48 +194,58 @@ class ProductRepository {
     // 2. Specific intent mappings for common user phrases
     if (!matchedCol) {
       if (/hometheater|home theater|soundbar|speaker|audio|theatre/i.test(rawQ)) {
-        matchedCol = this.shopifyCollections.find((c) => c.handle === "home-theatre" || c.title.toLowerCase().includes("home theatre"));
-      } else if (/monsoon.*tv|tv.*monsoon|led tv/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "home-theatre" || c.handle === "home-theater" || c.title.toLowerCase().includes("home theatre"));
+      } else if (/monsoon.*tv|tv.*monsoon|led tv|tv\b/i.test(rawQ)) {
         matchedCol = this.shopifyCollections.find((c) => c.handle === "led-tv");
       } else if (/cooker|pressure/i.test(rawQ)) {
-        matchedCol = this.shopifyCollections.find((c) => c.handle === "pressure-cooker");
-      } else if (/fry|pan/i.test(rawQ)) {
-        matchedCol = this.shopifyCollections.find((c) => c.handle === "fry-pan");
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "pressure-cooker" || c.handle.includes("cooker"));
+      } else if (/cookware|fry|pan|appam|dosa|kadai|tawa/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "cookware");
       } else if (/fan|bldc/i.test(rawQ)) {
-        matchedCol = this.shopifyCollections.find((c) => c.handle.includes("fan"));
-      } else if (/washing|washer/i.test(rawQ)) {
-        matchedCol = this.shopifyCollections.find((c) => c.handle.includes("washing"));
+        matchedCol = this.shopifyCollections.find((c) => c.handle.includes("fan") || c.title.toLowerCase().includes("fan"));
+      } else if (/appliance|appliances|kettle|air fryer/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "all-kitchen-appliances" || c.handle.includes("appliance"));
+      } else if (/deal|today/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "todays-deal");
+      } else if (/best.*seller/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "best-sellers");
+      } else if (/new/i.test(rawQ)) {
+        matchedCol = this.shopifyCollections.find((c) => c.handle === "new-arrivals");
       }
     }
 
-    // 3. If query mentions "monsoon" or "sale" without specific category:
-    if (!matchedCol && /monsoon|sale|offer|deal/i.test(rawQ)) {
-      const featuredCols = this.shopifyCollections.filter((c) =>
-        ["led-tv", "home-theatre", "pressure-cooker", "ktf-combo", "air-fryer"].includes(c.handle)
+    if (matchedCol) {
+      // Filter collection products by active products in catalog
+      const activeColProducts = (matchedCol.products || []).filter((cp: Product) =>
+        this.products.some((ap) => ap.id === cp.id || ap.sku === cp.sku)
       );
-      const combinedProds: Product[] = [];
-      for (const col of featuredCols) {
-        if (col.products) combinedProds.push(...col.products);
-      }
-
-      // Pick top LED TV collection as primary link if TV was mentioned, or Home Theatre
-      const primaryCol = rawQ.includes("tv")
-        ? this.shopifyCollections.find((c) => c.handle === "led-tv")
-        : this.shopifyCollections.find((c) => c.handle === "home-theatre") || featuredCols[0];
 
       return {
-        collection: primaryCol || {
-          title: "MR.PLUS Monsoon Special Collection",
-          handle: "led-tv",
-          url: "https://shop.mrplus.in/collections/led-tv",
-          description: "Exclusive Monsoon Deals"
+        collection: {
+          id: matchedCol.id,
+          title: matchedCol.title,
+          handle: matchedCol.handle,
+          description: matchedCol.description,
+          url: matchedCol.url || `https://shop.mrplus.in/collections/${matchedCol.handle}`
         },
-        products: combinedProds.slice(0, 8)
+        products: activeColProducts
       };
     }
 
-    if (matchedCol && matchedCol.products && matchedCol.products.length > 0) {
-      return { collection: matchedCol, products: matchedCol.products };
+    // 3. If query mentions "monsoon" or "sale" without specific category:
+    if (/monsoon|sale|offer|deal/i.test(rawQ)) {
+      const activeDeals = this.products.slice(0, 8);
+      const dealCol = this.shopifyCollections.find((c) => c.handle === "todays-deal" || c.handle === "best-sellers") || this.shopifyCollections[0];
+
+      return {
+        collection: dealCol || {
+          title: "MR.PLUS Today's Deals",
+          handle: "todays-deal",
+          url: "https://shop.mrplus.in/collections/todays-deal",
+          description: "Special Offers"
+        },
+        products: activeDeals
+      };
     }
 
     // Fallback: search products matching query

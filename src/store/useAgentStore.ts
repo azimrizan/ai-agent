@@ -76,10 +76,10 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
   messages: [INITIAL_MESSAGE],
   projectState: DEFAULT_PROJECT_STATE,
   suggestedActions: [
-    "Pressure cookers & frypans",
-    "Home Theatre & Soundbars",
-    "LED TVs & Appliances",
-    "Kitchenware & Cookware",
+    "Appachatty & Non-stick Frypans",
+    "Kadai & Biriyani Pots",
+    "Digital Air Fryers & Kettles",
+    "BLDC Fans & Gas Stoves",
   ],
 
   isThinking: false,

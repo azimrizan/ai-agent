@@ -46,26 +46,64 @@ import { productRepository } from "./repositories/product.repository.js";
 import { analyticsTracker } from "./agent/analytics.js";
 
 // Shopify Webhook endpoint (products/create, products/update, products/delete)
-app.post("/api/webhooks/shopify", (req, res) => {
+app.post("/api/webhooks/shopify", async (req, res) => {
   const topic = req.headers["x-shopify-topic"] as string;
   const body = req.body;
 
   if (topic === "products/delete" && body?.id) {
     productRepository.handleWebhookDelete(String(body.id));
-  } else if (body && body.id && body.title) {
-    productRepository.handleWebhookUpdate({
-      id: String(body.id),
-      title: body.title,
-      name: body.title,
-      description: body.body_html || "",
-      price: parseFloat(body.variants?.[0]?.price || "0"),
-      category: body.product_type || "General",
-      inStock: true,
-      tags: typeof body.tags === "string" ? body.tags.split(", ") : [],
-    } as any);
+  } else if (body && body.id) {
+    const isInactive =
+      body.status === "draft" ||
+      body.status === "archived" ||
+      body.status === "unlisted" ||
+      body.published_at === null;
+
+    if (isInactive) {
+      productRepository.handleWebhookDelete(String(body.id));
+    } else if (body.title) {
+      const numericId = String(body.id).replace(/[^0-9]/g, "");
+      const firstVariant = body.variants?.[0];
+      const firstImage = body.images?.[0]?.src || body.image?.src;
+
+      productRepository.handleWebhookUpdate({
+        id: `gid://shopify/Product/${numericId}`,
+        sku: firstVariant?.sku || numericId || body.handle || "SKU-MRPLUS",
+        name: body.title,
+        title: body.title,
+        description: body.body_html || `${body.title} by MR. Plus`,
+        category: body.product_type || body.vendor || "General",
+        subcategory: Array.isArray(body.tags) ? body.tags[0] : (typeof body.tags === "string" ? body.tags.split(",")[0] : body.product_type || "General"),
+        price: parseFloat(firstVariant?.price || "0"),
+        image: firstImage || "/White.png",
+        tags: typeof body.tags === "string" ? body.tags.split(",").map((t: string) => t.trim()) : (Array.isArray(body.tags) ? body.tags : []),
+        useCases: [body.product_type, body.title].filter(Boolean),
+        specifications: {
+          vendor: body.vendor || "MR Plus",
+          currency: "INR",
+          handle: body.handle || "",
+          shopifyId: numericId,
+        },
+        compatibleWith: [],
+        stockStatus: firstVariant?.inventory_quantity && firstVariant.inventory_quantity > 0 ? "in_stock" : "in_stock",
+      } as any);
+
+      // Trigger background sync to ensure collections and references are up to date
+      productRepository.syncShopifyProducts().catch(() => {});
+    }
   }
 
   res.status(200).send("OK");
+});
+
+// Manual on-demand Catalog Sync endpoint
+app.post("/api/products/sync", async (req, res) => {
+  try {
+    const synced = await productRepository.syncShopifyProducts();
+    res.status(200).json({ success: true, count: synced.length, message: `Synced ${synced.length} active products from Shopify Storefront` });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 // Analytics endpoint

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navbar } from "./Navbar.js";
 import { WorkspacePanel } from "./WorkspacePanel.js";
 import { ChatPanel } from "./ChatPanel.js";
@@ -7,7 +7,11 @@ import { MobileChatFab } from "./MobileChatFab.js";
 import { useAgentStore } from "../store/useAgentStore.js";
 
 export const AgentPage: React.FC = () => {
-  const { isMobileChatOpen } = useAgentStore();
+  const { isMobileChatOpen, fetchProductsCatalog } = useAgentStore();
+
+  useEffect(() => {
+    fetchProductsCatalog();
+  }, [fetchProductsCatalog]);
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[#050505] text-white overflow-hidden font-sans select-none sm:select-auto relative">
