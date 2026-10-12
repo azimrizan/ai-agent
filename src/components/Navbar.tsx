@@ -98,7 +98,7 @@ export const Navbar: React.FC = () => {
             onClick={() => resetSession("blank")}
           />
           <span className="text-[11px] text-white/40 font-normal hidden lg:inline border-l border-white/10 pl-3">
-            Kerala's First AI Shopping Experience
+            India's First AI Shopping Experience
           </span>
         </div>
 

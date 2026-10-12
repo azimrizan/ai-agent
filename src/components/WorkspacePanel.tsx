@@ -79,7 +79,7 @@ export const WorkspacePanel: React.FC = () => {
           </h1>
 
           <p className="text-xs sm:text-sm md:text-base text-white/70 font-normal max-w-xl leading-relaxed tracking-normal">
-            Kerala's First Agentic AI Shopping Experience.
+            India's First Agentic AI Shopping Experience.
           </p>
         </div>
       </div>
