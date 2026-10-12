@@ -54,9 +54,16 @@ export class LlmBridge {
         ranked = ranked.filter((p) => p.price <= extractedPrice);
       }
 
-      const topResult: any = ranked.slice(0, 12);
+      // If query is specifically asking about a single item, keep only the top matching item
+      const isSingleProductQuery =
+        /^(?:tell me about|details of|specs of|info on|show me the|what is|how much is)\b/i.test(userMessage.trim()) ||
+        /digital air fryer|coconut scraper|three burner gas stove/i.test(userMessage.trim());
 
-      if (colResult.collection) {
+      const topResult: any = isSingleProductQuery && ranked.length > 0
+        ? ranked.slice(0, 1)
+        : ranked.slice(0, 6);
+
+      if (colResult.collection && topResult.length > 0) {
         topResult.matchedCollection = {
           title: colResult.collection.title,
           handle: colResult.collection.handle,

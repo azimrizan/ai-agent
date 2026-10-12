@@ -17,7 +17,7 @@ export function checkPreGuardrails(userMessage: string): {
       passed: false,
       blockReason: "OFF_TOPIC",
       suggestedReply:
-        "I am your dedicated MR.PLUS AI Shopping Assistant! I specialize in kitchenware, pressure cookers, appachatty, frypans, cookware, soundbars, Bluetooth speakers, and home appliances. How can I assist you with your home setup today?",
+        "I am your dedicated MR.PLUS AI Shopping Assistant! I specialize in premium cookware, non-stick frypans, appachatty, digital air fryers, BLDC ceiling fans, and home kitchen appliances. How can I assist you with your setup today?",
     };
   }
 

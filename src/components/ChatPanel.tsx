@@ -296,10 +296,10 @@ export const ChatPanel: React.FC = () => {
 
 
   const quickPrompts = [
-    { title: "Show pressure cookers under ₹2,000", query: "Show me pressure cookers under ₹2,000" },
     { title: "Find non-stick frypans and appachatty", query: "Find non-stick frypans and appachatty" },
-    { title: "Home Theatre & Soundbars", query: "Show me Home Theatre and Soundbar speakers" },
     { title: "Digital Air Fryer 5L", query: "Tell me about the MR.PLUS Digital Air Fryer 5L" },
+    { title: "BLDC Ceiling Fans", query: "Show me BLDC energy-saving ceiling fans" },
+    { title: "Electric Kettles under ₹1,000", query: "Show me electric kettles under ₹1,000" },
   ];
 
 

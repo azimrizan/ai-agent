@@ -63,7 +63,7 @@ export class ToolRouter {
     // 3. Simple static intents (0 LLM Tokens, <5ms latency)
     if (intent.type === IntentType.GREETING) {
       const customerName = req.customerProfile?.firstName ? ` ${req.customerProfile.firstName}` : "";
-      const text = `### Hello${customerName}! Welcome to MR.PLUS 🌿\n\nI am your AI Shopping Architect for **shop.mrplus.in** (Kerala's premier home electronics & kitchenware experience).\n\nHow can I help you today?\n- 🥘 **Cookware & Pressure Cookers**\n- 🔊 **Soundbars & Bluetooth Speakers**\n- 🍳 **Appachatty & Frypans**\n- 📦 **Shipping, Returns & Warranty**`;
+      const text = `### Hello${customerName}! Welcome to MR.PLUS 🌿\n\nI am your AI Shopping Architect for **shop.mrplus.in** (Kerala's premier home appliances & cookware experience).\n\nHow can I help you today?\n- 🍳 **Non-Stick Frypans & Appachatty**\n- 💨 **Digital Air Fryer 5L**\n- 🌀 **BLDC Energy-Saving Ceiling Fans**\n- ⚡ **Electric Kettles & Gas Stoves**`;
       return this.buildDirectResponse(text, req.projectState);
     }
 
@@ -80,7 +80,7 @@ export class ToolRouter {
           [
             "How long does delivery take in Kerala?",
             "What is your return policy?",
-            "Show pressure cookers under ₹2000",
+            "Find non-stick frypans and appachatty",
           ]
         );
       } else if (confidenceEval.shouldAskClarification) {
@@ -109,7 +109,7 @@ export class ToolRouter {
     const defaultState: ProjectState = state || {
       id: "proj_default",
       title: "MR.PLUS AI Shopping Workspace",
-      goal: "Browse kitchenware, pressure cookers, and audio equipment",
+      goal: "Browse cookware, appliances, and BLDC ceiling fans",
       status: "discovering",
       budget: { maximum: null, currentTotal: 0, remaining: null },
       preferences: [],
@@ -130,9 +130,10 @@ export class ToolRouter {
       message: newMsg,
       projectState: defaultState,
       suggestedActions: actions || [
-        "Show pressure cookers under ₹2,000",
         "Find non-stick frypans and appachatty",
-        "Check soundbar speakers",
+        "Digital Air Fryer 5L",
+        "BLDC Ceiling Fans",
+        "Electric Kettles under ₹1,000",
       ],
       toolActivity: [],
     };

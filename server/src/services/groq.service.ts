@@ -119,7 +119,11 @@ export class GroqService {
     let updatedProjectState = JSON.parse(JSON.stringify(currentProjectState)) as ProjectState;
 
     if (preFetchedProducts && preFetchedProducts.length > 0) {
-      const itemsToUse = preFetchedProducts.slice(0, 12);
+      const isSingleProductQuery =
+        /^(?:tell me about|details of|specs of|info on|show me the|what is|how much is)\b/i.test(userMessage.trim()) ||
+        /digital air fryer|coconut scraper|three burner gas stove/i.test(userMessage.trim());
+
+      const itemsToUse = isSingleProductQuery ? preFetchedProducts.slice(0, 1) : preFetchedProducts.slice(0, 6);
       const shoppingListItems = itemsToUse.map((p: any) => ({
         productId: p.id,
         quantity: 1,
@@ -183,7 +187,7 @@ ${stateSummary}${customerContext}${preFetchedText}
 STRICT BEHAVIOR INSTRUCTIONS:
 1. GREETINGS & CASUAL INTROS (e.g., "hi", "hello", "hey", "good morning"):
    - Greet the user warmly and professionally. Address customer by name if known.
-   - Briefly ask how you can assist them today with MR.PLUS kitchenware, pressure cookers, appachatty, frypans, cookware, soundbars, or home appliances.
+   - Briefly ask how you can assist them today with MR.PLUS cookware, non-stick frypans, appachatty, digital air fryers, BLDC ceiling fans, or kitchen appliances.
 
 2. PRODUCT & COLLECTION ADVICE:
    - Provide clear, helpful, expert advice polished by LLM reasoning.
@@ -325,9 +329,10 @@ STRICT BEHAVIOR INSTRUCTIONS:
 
     const replyText = assistantMsg?.content || "I have updated your recommendations and project plan.";
     const suggestedActions = updatedProjectState.suggestedActions || [
-      "Show pressure cookers under ₹2,000",
       "Find non-stick frypans and appachatty",
-      "Check soundbar speakers",
+      "Digital Air Fryer 5L",
+      "BLDC Ceiling Fans",
+      "Electric Kettles under ₹1,000",
     ];
 
     return {

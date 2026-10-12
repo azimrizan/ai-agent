@@ -233,7 +233,7 @@ class ProductRepository {
     }
 
     // 3. If query mentions "monsoon" or "sale" without specific category:
-    if (/monsoon|sale|offer|deal/i.test(rawQ)) {
+    if (/monsoon|sale|offer|deal/i.test(rawQ) && !/theatre|theater|soundbar|tv|cooker/i.test(rawQ)) {
       const activeDeals = this.products.slice(0, 8);
       const dealCol = this.shopifyCollections.find((c) => c.handle === "todays-deal" || c.handle === "best-sellers") || this.shopifyCollections[0];
 
@@ -320,10 +320,35 @@ class ProductRepository {
     let results = [...this.products];
     let effectiveMaxPrice = options.maxPrice;
 
+    if (options.query && options.query.trim() !== "") {
+      const qLower = options.query.toLowerCase().trim();
+
+      // Guard: If query is for categories not stocked by MR.PLUS (soundbar, TV, pressure cooker, washing machine)
+      const isAudio = /\bsoundbars?\b|\bspeakers?\b|\bhome theate?r\b|\bbluetooth speaker\b/i.test(qLower);
+      const isTV = /\btelevisions?\b|\btvs?\b|\bled tv\b|\bsmart tv\b/i.test(qLower);
+      const isPressureCooker = /\bpressure cookers?\b/i.test(qLower);
+      const isWashingMachine = /\bwashing machines?\b/i.test(qLower);
+
+      if (isAudio || isTV || isPressureCooker || isWashingMachine) {
+        return [];
+      }
+    }
+
     const stopWords = new Set([
       "show", "me", "find", "get", "buy", "under", "below", "less", "than", "for",
       "with", "the", "a", "an", "of", "in", "to", "and", "or", "i", "want", "need",
-      "please", "list", "items", "some", "any", "which", "what", "are", "is", "can", "you"
+      "please", "list", "items", "some", "any", "which", "what", "are", "is", "can", "you",
+      "mr", "plus", "mrplus", "tell", "about", "details", "info", "specs", "specification",
+      "specifications", "price", "features", "item", "product", "products", "model",
+      "brand", "explore", "looking", "search", "check", "give", "good", "best", "available",
+      "store", "catalog", "popular", "like"
+    ]);
+
+    const WEAK_WORDS = new Set([
+      "home", "air", "water", "speed", "indoor", "outdoor", "use", "usage",
+      "room", "office", "technology", "operation", "quality", "finish",
+      "power", "body", "heavy", "light", "high", "low", "smooth", "new",
+      "energy", "saving"
     ]);
 
     let keyWords: string[] = [];
@@ -344,6 +369,25 @@ class ProductRepository {
         .replace(/[^\w\s]/g, " ")
         .split(/\s+/)
         .filter((word) => word.length > 1 && !stopWords.has(word) && !/^\d+$/.test(word));
+
+      // Domain intent gating to prevent cross-category contamination
+      const hasFanIntent = /\bfan\b|\bfans\b|\bbldc\b|\bceiling fan\b/i.test(rawQuery);
+      const hasCookwareIntent = /\bfrypan|\bpan\b|\bpans\b|\bappachatty|\bkadai|\btawa|\bbiriyani|\bpot\b|\bcookware/i.test(rawQuery);
+      const hasAirFryerIntent = /\bair fryer\b|\bfryer\b/i.test(rawQuery);
+      const hasKettleIntent = /\bkettle\b|\bkettles\b/i.test(rawQuery);
+      const hasStoveIntent = /\bstove\b|\bburner\b|\bgas stove\b/i.test(rawQuery);
+
+      if (hasFanIntent) {
+        results = results.filter((p) => /fan|bldc/i.test(`${p.name} ${p.category}`));
+      } else if (hasAirFryerIntent) {
+        results = results.filter((p) => /air fryer|fryer/i.test(`${p.name} ${p.category}`));
+      } else if (hasKettleIntent) {
+        results = results.filter((p) => /kettle/i.test(`${p.name} ${p.category}`));
+      } else if (hasStoveIntent) {
+        results = results.filter((p) => /gas stove|burner|glass top/i.test(`${p.name} ${p.category}`));
+      } else if (hasCookwareIntent) {
+        results = results.filter((p) => /appachatty|frypan|kadai|tawa|biriyani/i.test(`${p.name} ${p.category}`));
+      }
     }
 
     if (options.category && options.category.trim() !== "") {
@@ -367,33 +411,70 @@ class ProductRepository {
 
     if (keyWords.length > 0) {
       const rawQueryNoSpaces = options.query?.toLowerCase().replace(/\s+/g, "") || "";
+      const strongKeyWords = keyWords.filter((w) => !WEAK_WORDS.has(w));
 
-      results = results.filter((p) => {
-        const fullText = `${p.name} ${p.description} ${p.category} ${p.subcategory} ${p.tags.join(" ")} ${p.useCases.join(" ")}`.toLowerCase();
-        const fullTextNoSpaces = fullText.replace(/\s+/g, "");
+      const scoredResults = results
+        .map((p) => {
+          const title = (p.name || (p as any).title || "").toLowerCase();
+          const category = (p.category || "").toLowerCase();
+          const subcategory = (p.subcategory || "").toLowerCase();
+          const tags = (p.tags || []).join(" ").toLowerCase();
+          const useCases = (p.useCases || []).join(" ").toLowerCase();
+          const description = (p.description || "").toLowerCase();
 
-        if (rawQueryNoSpaces.length > 2 && fullTextNoSpaces.includes(rawQueryNoSpaces)) {
-          return true;
-        }
+          const primaryText = `${title} ${category} ${subcategory} ${tags} ${useCases}`;
+          const isDirectMatch = rawQueryNoSpaces.length > 2 && primaryText.replace(/\s+/g, "").includes(rawQueryNoSpaces);
 
-        return keyWords.some((word) => {
-          const singular = word.endsWith("s") ? word.slice(0, -1) : word;
-          const escWord = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const escSingular = singular.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const regWord = new RegExp(`\\b${escWord}\\b`, "i");
-          const regSingular = new RegExp(`\\b${escSingular}\\b`, "i");
-          return regWord.test(fullText) || regSingular.test(fullText);
-        });
-      });
+          let score = 0;
+          let primaryHitCount = 0;
+          let descHitCount = 0;
 
-      // Sort by relevance (number of matching keywords as whole words)
-      results.sort((a, b) => {
-        const fullTextA = `${a.name} ${a.description} ${a.category} ${a.subcategory}`.toLowerCase();
-        const fullTextB = `${b.name} ${b.description} ${b.category} ${b.subcategory}`.toLowerCase();
-        const scoreA = keyWords.reduce((acc, k) => acc + (new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(fullTextA) ? 1 : 0), 0);
-        const scoreB = keyWords.reduce((acc, k) => acc + (new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(fullTextB) ? 1 : 0), 0);
-        return scoreB - scoreA;
-      });
+          for (const word of keyWords) {
+            const singular = word.endsWith("s") ? word.slice(0, -1) : word;
+            const escWord = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const escSingular = singular.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            const regWord = new RegExp(`\\b${escWord}\\b`, "i");
+            const regSingular = new RegExp(`\\b${escSingular}\\b`, "i");
+
+            const isTitle = regWord.test(title) || regSingular.test(title);
+            const isCategory = regWord.test(category) || regWord.test(subcategory);
+            const isTag = regWord.test(tags) || regWord.test(useCases);
+            const isDesc = regWord.test(description) || regSingular.test(description);
+
+            if (isTitle) {
+              score += 10;
+              primaryHitCount++;
+            } else if (isCategory) {
+              score += 8;
+              primaryHitCount++;
+            } else if (isTag) {
+              score += 6;
+              primaryHitCount++;
+            } else if (isDesc && !WEAK_WORDS.has(word)) {
+              score += 2;
+              descHitCount++;
+            }
+          }
+
+          if (isDirectMatch) {
+            score += 15;
+            primaryHitCount++;
+          }
+
+          // A valid match must have hit primary attributes (title/category/tags)
+          // or matched multiple strong keywords in description
+          const isLegitimateMatch =
+            isDirectMatch ||
+            primaryHitCount > 0 ||
+            (strongKeyWords.length > 0 && descHitCount >= 2);
+
+          return { product: p, score, isLegitimateMatch };
+        })
+        .filter((item) => item.isLegitimateMatch && item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map((item) => item.product);
+
+      results = scoredResults;
     }
 
     if (options.limit && options.limit > 0) {

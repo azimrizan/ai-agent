@@ -146,11 +146,17 @@ export class AgentOrchestrator {
       state.status = "planning";
       state.title = `MR.PLUS Curated Catalog`;
       state.goal = `Found matching products for "${req.message}"`;
-      state.shoppingList = found.slice(0, 5).map((p: any) => ({
+      const isSingleProductQuery =
+        /^(?:tell me about|details of|specs of|info on|show me the|what is|how much is)\b/i.test(req.message.trim()) ||
+        /digital air fryer|coconut scraper|three burner gas stove/i.test(req.message.trim());
+
+      const itemsToLoad = isSingleProductQuery ? found.slice(0, 1) : found.slice(0, 5);
+
+      state.shoppingList = itemsToLoad.map((p: any) => ({
         productId: p.id,
         quantity: 1,
         priority: "essential" as const,
-        reason: `Matched "${req.message}".`
+        reason: `Matched "${req.message.slice(0, 30)}".`
       }));
 
       const basket = productRepository.calculateBasket(state.shoppingList, null);
@@ -160,26 +166,26 @@ export class AgentOrchestrator {
         remaining: null
       };
 
-      const prodListMarkdown = found
-        .slice(0, 5)
+      const prodListMarkdown = itemsToLoad
         .map((p: any) => `- **${p.name || p.title}** — \`₹${(p.price || 0).toLocaleString()}\` (${p.stockStatus === "in_stock" ? "In Stock" : "Available"})\n  *${(p.description || "").slice(0, 100)}...*`)
         .join("\n");
 
       replyText = `### MR.PLUS Curated Recommendations 🛍️\n\nHere are matching items from our store catalog for **"${req.message}"**:\n\n${prodListMarkdown}\n\nSelected items are loaded in your **Workspace Plan** on the left panel!`;
 
       suggestedActions = [
-        "Show pressure cookers under ₹2000",
-        "Check non-stick frypans",
-        "Find nearby physical store"
+        "Find non-stick frypans and appachatty",
+        "Digital Air Fryer 5L",
+        "BLDC Ceiling Fans",
+        "Electric Kettles under ₹1,000"
       ];
     } else {
-      replyText = `### MR.PLUS Store Catalog 🛋️\n\nNo exact items matched **"${req.message}"** in our store catalog.\n\nTry searching for popular Kerala household items like **"pressure cooker"**, **"appachatty"**, **"frypan"**, **"tawa"**, **"kettle"**, or **"soundbar"**!`;
+      replyText = `### MR.PLUS Store Catalog 🛋️\n\nNo exact items matched **"${req.message}"** in our store catalog.\n\nTry searching for in-stock MR.PLUS household items like **"appachatty"**, **"frypan"**, **"tawa"**, **"kettle"**, **"air fryer"**, or **"ceiling fan"**!`;
 
       suggestedActions = [
-        "Show MR.PLUS Cookware",
-        "Show Electrical Kettles",
-        "Show Pressure Cookers",
-        "Show Soundbars & Speakers"
+        "Find non-stick frypans and appachatty",
+        "Digital Air Fryer 5L",
+        "BLDC Ceiling Fans",
+        "Electric Kettles under ₹1,000"
       ];
     }
 

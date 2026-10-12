@@ -21,7 +21,16 @@ const STOP_WORDS = new Set([
   "show", "me", "find", "get", "buy", "under", "below", "less", "than", "for",
   "with", "the", "a", "an", "of", "in", "to", "and", "or", "i", "want", "need",
   "please", "list", "items", "some", "any", "which", "what", "are", "is", "can", "you",
-  "other", "only", "one", "combo", "workspace", "here", "give", "also", "bring"
+  "other", "only", "one", "combo", "workspace", "here", "give", "also", "bring",
+  "mr", "plus", "mrplus", "tell", "about", "details", "info", "specs", "price",
+  "features", "item", "product", "products", "model", "brand", "popular", "like"
+]);
+
+const WEAK_TERMS = new Set([
+  "home", "air", "water", "speed", "indoor", "outdoor", "use", "usage",
+  "room", "office", "technology", "operation", "quality", "finish",
+  "power", "body", "heavy", "light", "high", "low", "smooth", "new",
+  "energy", "saving"
 ]);
 
 export function rankProducts(
@@ -51,9 +60,9 @@ export function rankProducts(
     for (const term of queryTerms) {
       const escaped = escapeRegex(term);
       const reg = new RegExp(`\\b${escaped}\\b`, "i");
-      if (reg.test(titleLower)) keywordHits += 2;
-      if (reg.test(descLower)) keywordHits += 1;
-      if (reg.test(catLower)) keywordHits += 1;
+      if (reg.test(titleLower)) keywordHits += 3;
+      if (reg.test(catLower)) keywordHits += 2;
+      if (!WEAK_TERMS.has(term) && reg.test(descLower)) keywordHits += 1;
     }
     if (isDirectMatch) keywordHits += 3;
 
@@ -102,7 +111,11 @@ export function rankProducts(
     };
   });
 
-  return scored
+  const relevant = queryTerms.length > 0
+    ? scored.filter((s) => s.factors.exactKeywordMatch > 0 || s.factors.collectionRelevance > 0 || s.factors.tagMatch > 0)
+    : scored;
+
+  return relevant
     .sort((a, b) => b.score - a.score)
     .map((s) => s.product);
 }

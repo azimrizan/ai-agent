@@ -381,11 +381,10 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
         messages: [INITIAL_MESSAGE],
         projectState: DEFAULT_PROJECT_STATE,
         suggestedActions: [
-          "Show pressure cookers under ₹2,000",
           "Find non-stick frypans and appachatty",
-          "Home Theatre & Soundbar Speakers",
           "Digital Air Fryer 5L",
-
+          "BLDC Ceiling Fans",
+          "Electric Kettles under ₹1,000",
         ],
         activeWorkspaceTab: "plan",
       });
