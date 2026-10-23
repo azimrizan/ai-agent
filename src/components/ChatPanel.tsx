@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAgentStore } from "../store/useAgentStore.js";
-import { ArrowUp, Image as ImageIcon, Sparkles, Mic, X } from "lucide-react";
+import { ArrowUp, Sparkles, Mic, X } from "lucide-react";
 
 const renderFormattedText = (text: string) => {
   const regex = /(\[.*?\]\(https?:\/\/[^\s\)]+\)|\*\*.*?\*\*|https?:\/\/[^\s\)]+)/g;
@@ -249,9 +249,10 @@ const FormattedMessage: React.FC<{ content: string; isUser: boolean }> = ({ cont
 export const ChatPanel: React.FC = () => {
   const { messages, sendMessage, isThinking, toggleMobileChat } = useAgentStore();
   const [inputText, setInputText] = useState("");
-  const [attachedImage, setAttachedImage] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const [micError, setMicError] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -261,26 +262,73 @@ export const ChatPanel: React.FC = () => {
     scrollToBottom();
   }, [messages, isThinking]);
 
+  // Stop any active recognition when the panel unmounts (e.g. mobile overlay closes)
+  useEffect(() => {
+    return () => recognitionRef.current?.abort();
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim() && !attachedImage) return;
+    if (!inputText.trim()) return;
 
-    sendMessage(inputText, attachedImage || undefined);
+    recognitionRef.current?.stop();
+    sendMessage(inputText);
     setInputText("");
-    setAttachedImage(null);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleMicClick = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === "string") {
-        setAttachedImage(reader.result);
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setMicError("Voice input isn't supported in this browser. Try Chrome or Safari.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    // Append speech to whatever was already typed
+    const baseText = inputText.trim() ? `${inputText.trim()} ` : "";
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setMicError("");
+    };
+    recognition.onresult = (event: any) => {
+      let transcript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      setInputText(baseText + transcript);
+    };
+    recognition.onerror = (event: any) => {
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        setMicError("Microphone access is blocked. Allow it in your browser settings and try again.");
+      } else if (event.error === "no-speech") {
+        setMicError("Didn't catch that. Tap the mic and try again.");
+      } else if (event.error !== "aborted") {
+        setMicError("Voice input failed. Please try again.");
       }
     };
-    reader.readAsDataURL(file);
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+
+    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+    } catch {
+      setIsListening(false);
+      recognitionRef.current = null;
+      setMicError("Couldn't start the microphone. Please try again.");
+    }
   };
 
   const activeConversationMessages = messages.filter((msg) => msg.id !== "msg_init_0");
@@ -404,14 +452,11 @@ export const ChatPanel: React.FC = () => {
 
       {/* Input Bar (Floating Glass Capsule) */}
       <div className="p-4 shrink-0 relative z-10">
-        {attachedImage && (
-          <div className="mb-2 relative inline-block">
-            <img src={attachedImage} alt="Attachment" className="w-12 h-12 rounded-lg object-cover border border-white/20" />
-            <button
-              onClick={() => setAttachedImage(null)}
-              className="absolute -top-1.5 -right-1.5 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center border border-white/20"
-            >
-              ×
+        {micError && (
+          <div className="mb-2 px-3.5 py-2 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-300 text-[11px] flex items-center justify-between gap-2">
+            <span>{micError}</span>
+            <button type="button" onClick={() => setMicError("")} className="text-red-300/70 hover:text-red-200">
+              <X className="w-3 h-3" />
             </button>
           </div>
         )}
@@ -421,58 +466,30 @@ export const ChatPanel: React.FC = () => {
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Ask MR.PLUS or use voice..."
-            className="w-full glass-capsule text-white placeholder-white/30 text-sm rounded-full pl-12 pr-20 py-3.5 focus:outline-none transition-all"
+            placeholder={isListening ? "Listening..." : "Ask MR.PLUS or use voice..."}
+            className="w-full glass-capsule text-white placeholder-white/30 text-sm rounded-full pl-5 pr-20 py-3.5 focus:outline-none transition-all"
           />
-
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            className="hidden"
-          />
-
-          {/* Left Attachment Trigger */}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute left-3.5 p-1.5 text-white/40 hover:text-white transition-colors"
-            title="Attach image"
-          >
-            <ImageIcon className="w-4 h-4" />
-          </button>
 
           <div className="absolute right-2.5 flex items-center gap-1.5">
             {/* Mic Voice Search Trigger */}
             <button
               type="button"
-              onClick={() => {
-                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-                if (SpeechRecognition) {
-                  const recognition = new SpeechRecognition();
-                  recognition.lang = "en-IN";
-                  recognition.onstart = () => setInputText("Listening...");
-                  recognition.onresult = (event: any) => {
-                    const transcript = event.results[0][0].transcript;
-                    setInputText(transcript);
-                  };
-                  recognition.start();
-                } else {
-                  alert("Speech recognition is not supported in this browser.");
-                }
-              }}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white transition-colors"
-              title="Voice query input"
+              onClick={handleMicClick}
+              className={`relative p-2 rounded-full transition-colors ${
+                isListening
+                  ? "bg-red-500 text-white"
+                  : "bg-white/10 hover:bg-white/20 text-white/70 hover:text-white"
+              }`}
+              title={isListening ? "Stop listening" : "Voice query input"}
             >
-              <Mic className="w-3.5 h-3.5" />
+              {isListening && <span className="absolute inset-0 rounded-full bg-red-500/60 animate-ping" />}
+              <Mic className="w-3.5 h-3.5 relative" />
             </button>
 
             {/* Send Trigger */}
             <button
               type="submit"
-              disabled={!inputText.trim() && !attachedImage}
+              disabled={!inputText.trim()}
               className="p-2 rounded-full bg-white text-black hover:bg-white/90 disabled:opacity-20 disabled:hover:bg-white transition-all shadow-md"
             >
               <ArrowUp className="w-3.5 h-3.5" />
