@@ -322,7 +322,7 @@ export const ChatPanel: React.FC = () => {
           <button
             type="button"
             onClick={() => toggleMobileChat(false)}
-            className="p-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white md:hidden transition-colors"
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white lg:hidden transition-colors"
             title="Close Chat Overlay"
           >
             <X className="w-4 h-4" />

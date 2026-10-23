@@ -88,7 +88,7 @@ export const WorkspacePanel: React.FC = () => {
 
   // 3. Results Gallery State (Apple Store Product Grid)
   return (
-    <div className="flex flex-col h-full overflow-y-auto p-6 sm:p-10 animate-in fade-in duration-500">
+    <div className="flex flex-col h-full overflow-y-auto p-6 sm:p-10 pb-28 sm:pb-28 lg:pb-10 animate-in fade-in duration-500">
       {/* Header Info */}
       <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
         <div>

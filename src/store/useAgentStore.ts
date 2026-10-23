@@ -25,6 +25,7 @@ interface AgentStoreState {
   customerProfile: CustomerProfile | null;
   isMobileChatOpen: boolean;
   hasUnreadReply: boolean;
+  mobileReplyNotice: { preview: string; productCount: number } | null;
   replacementModal: {
     isOpen: boolean;
     targetItem: ShoppingListItem | null;
@@ -35,6 +36,7 @@ interface AgentStoreState {
   sendMessage: (text: string, image?: string) => Promise<void>;
   toggleMobileChat: (open?: boolean) => void;
   clearUnreadReply: () => void;
+  dismissMobileReplyNotice: () => void;
   setWorkspaceTab: (tab: "analysis" | "plan" | "budget" | "stores") => void;
   setUseMockAI: (useMock: boolean) => void;
   setCustomerProfile: (profile: CustomerProfile | null) => void;
@@ -65,6 +67,21 @@ const DEFAULT_PROJECT_STATE: ProjectState = {
   suggestedActions: [],
 };
 
+// Matches Tailwind's `lg` breakpoint, below which the chat lives in a mobile overlay
+const MOBILE_BREAKPOINT = 1024;
+const isMobileViewport = () => typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
+
+const shoppingListKey = (list: ShoppingListItem[] = []) => list.map((item) => item.productId).join(",");
+
+const toPreviewText = (content: string) =>
+  content
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[#*|>_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 160);
+
 const INITIAL_MESSAGE: ChatMessage = {
   id: "msg_init_0",
   role: "assistant",
@@ -89,6 +106,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
   customerProfile: null,
   isMobileChatOpen: false,
   hasUnreadReply: false,
+  mobileReplyNotice: null,
   replacementModal: {
     isOpen: false,
     targetItem: null,
@@ -101,11 +119,14 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       return {
         isMobileChatOpen: nextOpen,
         hasUnreadReply: nextOpen ? false : state.hasUnreadReply,
+        mobileReplyNotice: nextOpen ? null : state.mobileReplyNotice,
       };
     });
   },
 
   clearUnreadReply: () => set({ hasUnreadReply: false }),
+
+  dismissMobileReplyNotice: () => set({ mobileReplyNotice: null }),
 
   setWorkspaceTab: (tab) => set({ activeWorkspaceTab: tab }),
 
@@ -147,13 +168,12 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       imageAttachment: image,
     };
 
-    // Auto-close mobile chat modal when prompt is submitted on mobile (<768px)
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-
+    // Auto-close mobile chat overlay on submit so the user sees the workspace loader
     set((state) => ({
       messages: [...state.messages, userMessage],
       isThinking: true,
-      isMobileChatOpen: isMobile ? false : state.isMobileChatOpen,
+      isMobileChatOpen: isMobileViewport() ? false : state.isMobileChatOpen,
+      mobileReplyNotice: null,
     }));
 
     const startTime = Date.now();
@@ -184,19 +204,37 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
         await new Promise((resolve) => setTimeout(resolve, minLoadingDuration - elapsed));
       }
 
-      set((state) => ({
-        messages: [...state.messages, data.message],
-        projectState: data.projectState || state.projectState,
-        suggestedActions: data.suggestedActions || state.suggestedActions,
-        isThinking: false,
-        hasUnreadReply: !state.isMobileChatOpen,
-        activeWorkspaceTab:
-          data.projectState?.imageAnalysis && state.activeWorkspaceTab === "plan" && !state.projectState.imageAnalysis
-            ? "analysis"
-            : data.projectState?.shoppingList?.length > 0 && state.projectState.status === "discovering"
-            ? "plan"
-            : state.activeWorkspaceTab,
-      }));
+      set((state) => {
+        const nextShoppingList: ShoppingListItem[] = data.projectState?.shoppingList || state.projectState.shoppingList;
+        const workspaceChanged =
+          nextShoppingList.length > 0 &&
+          shoppingListKey(nextShoppingList) !== shoppingListKey(state.projectState.shoppingList);
+
+        // On mobile the chat overlay is closed while the agent works. If the reply
+        // brought new products, keep the workspace visible and show a reply toast;
+        // otherwise there's nothing new to see there, so reopen the chat directly.
+        const mobileClosed = isMobileViewport() && !state.isMobileChatOpen;
+        const reopenChat = mobileClosed && !workspaceChanged;
+
+        return {
+          messages: [...state.messages, data.message],
+          projectState: data.projectState || state.projectState,
+          suggestedActions: data.suggestedActions || state.suggestedActions,
+          isThinking: false,
+          isMobileChatOpen: reopenChat ? true : state.isMobileChatOpen,
+          hasUnreadReply: !state.isMobileChatOpen && !reopenChat,
+          mobileReplyNotice:
+            mobileClosed && workspaceChanged
+              ? { preview: toPreviewText(data.message?.content || ""), productCount: nextShoppingList.length }
+              : null,
+          activeWorkspaceTab:
+            data.projectState?.imageAnalysis && state.activeWorkspaceTab === "plan" && !state.projectState.imageAnalysis
+              ? "analysis"
+              : data.projectState?.shoppingList?.length > 0 && state.projectState.status === "discovering"
+              ? "plan"
+              : state.activeWorkspaceTab,
+        };
+      });
 
       // Refresh products catalog after AI response
       get().fetchProductsCatalog();
@@ -215,6 +253,7 @@ export const useAgentStore = create<AgentStoreState>((set, get) => ({
       set((state) => ({
         messages: [...state.messages, errorMessage],
         isThinking: false,
+        isMobileChatOpen: isMobileViewport() ? true : state.isMobileChatOpen,
       }));
     }
   },
