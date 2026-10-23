@@ -63,7 +63,7 @@ export class ToolRouter {
     // 3. Simple static intents (0 LLM Tokens, <5ms latency)
     if (intent.type === IntentType.GREETING) {
       const customerName = req.customerProfile?.firstName ? ` ${req.customerProfile.firstName}` : "";
-      const text = `### Hello${customerName}! Welcome to MR.PLUS 🌿\n\nI am your AI Shopping Architect for **shop.mrplus.in** (Kerala's premier home appliances & cookware experience).\n\nHow can I help you today?\n- 🍳 **Non-Stick Frypans & Appachatty**\n- 💨 **Digital Air Fryer 5L**\n- 🌀 **BLDC Energy-Saving Ceiling Fans**\n- ⚡ **Electric Kettles & Gas Stoves**`;
+      const text = `### Hello${customerName}! Welcome to MR.PLUS 🌿\n\nI am your AI Shopping Architect for **mrplus.in** (Kerala's premier home appliances & cookware experience).\n\nHow can I help you today?\n- 🍳 **Non-Stick Frypans & Appachatty**\n- 💨 **Digital Air Fryer 5L**\n- 🌀 **BLDC Energy-Saving Ceiling Fans**\n- ⚡ **Electric Kettles & Gas Stoves**`;
       return this.buildDirectResponse(text, req.projectState);
     }
 

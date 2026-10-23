@@ -226,7 +226,7 @@ class ProductRepository {
           title: matchedCol.title,
           handle: matchedCol.handle,
           description: matchedCol.description,
-          url: matchedCol.url || `https://shop.mrplus.in/collections/${matchedCol.handle}`
+          url: matchedCol.url || `https://mrplus.in/collections/${matchedCol.handle}`
         },
         products: activeColProducts
       };
@@ -241,7 +241,7 @@ class ProductRepository {
         collection: dealCol || {
           title: "MR.PLUS Today's Deals",
           handle: "todays-deal",
-          url: "https://shop.mrplus.in/collections/todays-deal",
+          url: "https://mrplus.in/collections/todays-deal",
           description: "Special Offers"
         },
         products: activeDeals

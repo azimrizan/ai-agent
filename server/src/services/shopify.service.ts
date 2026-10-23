@@ -30,7 +30,7 @@ export class ShopifyService {
 
   public getDirectCartUrl(variantId: string, quantity: number = 1): string {
     const numericVariantId = String(variantId).split("/").pop() || variantId;
-    return `https://shop.mrplus.in/cart/${numericVariantId}:${quantity}`;
+    return `https://mrplus.in/cart/${numericVariantId}:${quantity}`;
   }
 
   public async fetchCollections(first: number = 50): Promise<ShopifyCollectionData[]> {
@@ -119,7 +119,7 @@ export class ShopifyService {
           title: node.title,
           handle: node.handle,
           description: node.description || "",
-          url: `https://shop.mrplus.in/collections/${node.handle}`,
+          url: `https://mrplus.in/collections/${node.handle}`,
           products,
         };
       });

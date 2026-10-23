@@ -179,7 +179,7 @@ export class GroqService {
       ? `Project Title: "${currentProjectState.title}" | Status: ${currentProjectState.status || "planning"}`
       : "No active project";
 
-    const systemPrompt = `You are MR.PLUS AI Shopping Assistant for shop.mrplus.in (Kerala's premier AI shopping experience).
+    const systemPrompt = `You are MR.PLUS AI Shopping Assistant for mrplus.in (Kerala's premier AI shopping experience).
 
 IMPORTANT CONTEXT:
 ${stateSummary}${customerContext}${preFetchedText}
@@ -192,7 +192,7 @@ STRICT BEHAVIOR INSTRUCTIONS:
 2. PRODUCT & COLLECTION ADVICE:
    - Provide clear, helpful, expert advice polished by LLM reasoning.
    - Format prices clearly in INR (₹).
-   - STRICT URL RULE: ONLY use exact collection URLs explicitly provided in the context above (e.g., https://shop.mrplus.in/collections/home-theatre or https://shop.mrplus.in/collections/led-tv). NEVER invent or guess collection URLs like 'home-theater'!
+   - STRICT URL RULE: ONLY use exact collection URLs explicitly provided in the context above (e.g., https://mrplus.in/collections/home-theatre or https://mrplus.in/collections/led-tv). NEVER invent or guess collection URLs like 'home-theater'!
 
 3. TOOL CALL PARAMETER RULE:
    - Always pass numeric parameters (e.g. maxPrice, targetPrice, limit, quantity) strictly as raw JSON numbers without quotes, e.g. maxPrice: 2000, NOT '2000'.`;

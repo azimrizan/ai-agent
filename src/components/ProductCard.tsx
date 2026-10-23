@@ -11,7 +11,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { sendMessage } = useAgentStore();
 
-  const shopifyDomain = "shop.mrplus.in";
+  const shopifyDomain = "mrplus.in";
   const handle = product.specifications?.handle as string | undefined;
   const variantId = product.specifications?.variantId as string | number | undefined;
 
@@ -78,7 +78,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           target="_blank"
           rel="noopener noreferrer"
           className="px-6 sm:px-7 py-2.5 rounded-full bg-[#E8E8ED] hover:bg-white active:scale-95 text-slate-950 font-semibold text-xs sm:text-sm transition-all duration-200 shadow-md flex items-center justify-center text-center"
-          title="Direct checkout on shop.mrplus.in"
+          title="Direct checkout on mrplus.in"
         >
           <span>Buy Now</span>
         </a>

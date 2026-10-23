@@ -67,7 +67,7 @@ export class LlmBridge {
         topResult.matchedCollection = {
           title: colResult.collection.title,
           handle: colResult.collection.handle,
-          url: colResult.collection.url || `https://shop.mrplus.in/collections/${colResult.collection.handle}`,
+          url: colResult.collection.url || `https://mrplus.in/collections/${colResult.collection.handle}`,
         };
       }
       console.log(`📦 [LlmBridge] Pre-fetched ${topResult.length} matching products for LLM context.`);

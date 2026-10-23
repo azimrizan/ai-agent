@@ -12,7 +12,7 @@ export const searchCollectionsTool = {
   },
   execute: async (args: { collectionName: string }) => {
     const colResult = await productRepository.searchCollectionsAsync(args.collectionName);
-    const collectionUrl = colResult.collection?.url || `https://shop.mrplus.in/collections/${encodeURIComponent(args.collectionName.toLowerCase().replace(/\s+/g, "-"))}`;
+    const collectionUrl = colResult.collection?.url || `https://mrplus.in/collections/${encodeURIComponent(args.collectionName.toLowerCase().replace(/\s+/g, "-"))}`;
 
     return {
       tool: "search_collections",

@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function syncShopifyCatalog() {
-  console.log("Fetching real catalog from shop.mrplus.in (bxyaz5-em.myshopify.com)...");
+  console.log("Fetching real catalog from mrplus.in (bxyaz5-em.myshopify.com)...");
 
   const response = await fetch("https://bxyaz5-em.myshopify.com/api/2024-01/graphql.json", {
     method: "POST",
@@ -116,7 +116,7 @@ async function syncShopifyCatalog() {
     };
   });
 
-  console.log(`✅ Extracted ${realProducts.length} authentic MR.PLUS products from shop.mrplus.in!`);
+  console.log(`✅ Extracted ${realProducts.length} authentic MR.PLUS products from mrplus.in!`);
 
   const serverJsonPath = path.join(__dirname, "../data/products.json");
   fs.writeFileSync(serverJsonPath, JSON.stringify(realProducts, null, 2), "utf-8");

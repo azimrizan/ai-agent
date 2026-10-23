@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
   };
 
   const handleOpenStoreAccount = () => {
-    window.open("https://shop.mrplus.in/account", "_blank");
+    window.open("https://mrplus.in/account", "_blank");
   };
 
   const handleSignOut = () => {
@@ -114,7 +114,7 @@ export const Navbar: React.FC = () => {
           </button>
 
           <a
-            href="https://shop.mrplus.in/"
+            href="https://mrplus.in/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
@@ -260,7 +260,7 @@ export const Navbar: React.FC = () => {
                     onClick={handleOpenStoreAccount}
                     className="text-xs text-white/40 hover:text-white transition-colors flex items-center justify-center gap-1 mx-auto"
                   >
-                    <span>Or open shop.mrplus.in account page</span>
+                    <span>Or open mrplus.in account page</span>
                     <ExternalLink className="w-3 h-3" />
                   </button>
                 </div>
